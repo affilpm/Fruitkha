@@ -1,0 +1,245 @@
+{% extends 'main_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Breadcrumb Section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Checkout</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Breadcrumb Section -->
+
+<!-- Checkout Section -->
+<div class="container mt-5">
+    <div class="row">
+        <!-- Shipping Address Section -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Shipping Address
+                </div>
+                <div class="card-body">
+                    <form id="shipping-address-form">
+                        <div class="form-group">
+                            <label for="shipping-address">Select or Add Shipping Address:</label>
+                            <select class="form-control" id="shipping-address" name="shipping-address">
+                                <option value="">Select Shipping Address</option>
+                                {% for address in shipping_addresses %}
+                                <option value="{{ address.id }}">{{ address }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-success mb-3" id="add-address-btn">Add New Address</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Product Summary
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{% if item.product.offer %}
+                                        <del>${{ item.product.original_price }}</del>
+                                        ${{ item.product.price }}
+                                    {% else %}
+                                        ${{ item.product.price }} 
+                                    {% endif %}</td>
+                                    <td>${{ item.subtotal }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary and Payment Section -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Order Summary
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Subtotal:</td>
+                                <td>₹{{ subtotal }}</td>
+                            </tr>
+                            {% if coupon %}
+                            <tr id="coupon-discount-row">
+                                <td>Coupon Discount:</td>
+                                <td id="coupon-discount">{{ coupon.code }} - Discount: ₹{{ discount_amount }}</td>
+                            </tr>
+                            {% endif %}
+                            <tr class="font-weight-bold">
+                                <td>Total:</td>
+                                <td id="total-cost">₹{{ total_cost }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Coupon Box Section -->
+            <!-- Coupon Box Section -->
+            <div class="card mb-4" id="coupon-card">
+                <div class="card-header bg-primary text-white">
+                    Apply Coupon
+                </div>
+                <div class="card-body">
+                    <form id="coupon-form" method="POST" action="{% url 'apply_coupon' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="coupon_code">Coupon Code</label>
+                            <input type="text" name="code" id="coupon_code" class="form-control" placeholder="Enter coupon code">
+                        </div>
+                        {% if error_message %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error_message }}
+                        </div>
+                      {% endif %}
+    
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <button class="btn btn-success" type="submit" id="apply-coupon-btn">Apply</button>
+                    </form>
+                    {% if coupon.code %}
+                    <form method="post" action="{% url 'remove_coupon' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger mt-2" type="submit">Remove Coupon</button>
+                    </form>
+                    {% endif %}
+                   
+
+                </div>
+            </div>
+            
+            
+<!-- Payment Method Section -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        Payment Method
+    </div>
+    <div class="card-body">
+        <!-- Checkout Form -->
+        <form id="checkout-form" method="POST" action="{% url 'place_order' %}">
+            {% csrf_token %}
+            <div class="form-group" id="cod-option">
+                <label><input type="radio" name="payment-method" value="cash_on_delivery" checked> Cash on Delivery</label>
+            </div>
+            <div class="form-group" id="razorpay-option">
+                <label><input type="radio" name="payment-method" value="razorpay"> Razorpay</label>
+            </div>
+            <!-- Add hidden input for selected address ID -->
+            <input type="hidden" name="selected-address" id="selected-address">
+            <!-- Other form fields -->
+            <button type="button" class="btn btn-primary btn-block" id="place-order-btn">Complete Purchase</button>
+        </form>
+    </div>
+    6 z</div>
+    </div>
+</div>
+</div>
+
+{% if payment %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to toggle the visibility of the payment buttons and options
+        function togglePaymentOptions() {
+            var selectedPaymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            if (selectedPaymentMethod === "razorpay") {
+                // Redirect to the Razorpay URL when Razorpay is selected
+                window.location.href = "{% url 'razorpay' %}";
+            }
+        }
+
+        // Get the radio buttons for payment method
+        var radioButtons = document.getElementsByName("payment-method");
+
+        // Add event listener to each radio button
+        radioButtons.forEach(function(button) {
+            button.addEventListener("change", togglePaymentOptions);
+        });
+    });
+</script>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Update hidden input with selected address ID
+        document.getElementById("shipping-address").addEventListener("change", function() {
+            var selectedAddress = this.value;
+            document.getElementById("selected-address").value = selectedAddress;
+        });
+
+        // Validate address selection before form submission
+        document.getElementById("place-order-btn").addEventListener("click", function(event) {
+            var selectedAddress = document.getElementById("selected-address").value;
+            var totalCost = {{ total_cost|floatformat:2 }}; // Assuming total_cost is passed from Django view
+            var paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            var form = document.getElementById("checkout-form");
+
+            if (selectedAddress === "") {
+                alert("Please select a shipping address.");
+                event.preventDefault(); // Prevent form submission if address is not selected
+            } else if (paymentMethod === "cash_on_delivery" && totalCost > 1000) {
+                alert("Cash on Delivery is available only for orders less than 1000.");
+                event.preventDefault(); // Prevent form submission if total cost is less than 1000
+            } else {
+                // Proceed with form submission
+                if (paymentMethod === "cash_on_delivery" && totalCost > 1000) {
+                    // Disable cash on delivery option if total cost is less than 1000
+                    document.getElementById("cod-option").style.display = "none";
+                    // Redirect to checkout page to select another payment method
+                    window.location.href = "{% url 'checkout' %}";
+                } else {
+                    if (paymentMethod === "cash_on_delivery") {
+                        form.action = "{% url 'place_order' %}";
+                    } else if (paymentMethod === "razorpay") {
+                        form.action = "{% url 'razorpay' %}";
+                    }
+                    form.submit();
+                }
+            }
+        });
+
+        // Redirect to add address page
+        document.getElementById("add-address-btn").addEventListener("click", function() {
+            window.location.href = "{% url 'add_address_checkout' %}";
+        });
+    });
+</script>
+
+
+{% endblock %}

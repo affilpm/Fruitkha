@@ -1,0 +1,197 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Breadcrumb section -->
+<div class="breadcrumb-section breadcrumb-bg" style="margin-bottom: 20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>See more Details</p>
+                    <h1>Account</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <div class="container mt-5"> {% endcomment %}
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">Order #{{ order.pk }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5>Order Details</h5>
+                    <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+                    <p><strong>Subtotal:</strong> ₹{{ order.subtotal }}</p>
+                    {% if order.coupon %}
+                    <p><strong>Coupon Applied:</strong> {{ order.coupon.code }}</p>
+                    <p><strong>Coupon Discount:</strong> ₹{{ order.coupon.discount_amount }}</p>
+                    {% endif %}
+                    <p><strong>Total Amount Paid:</strong> ₹{{ order.total_cost }}</p>
+                    <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+                    {% if order.payment_method.lower == 'razorpay' %}
+                    <p><strong>Razorpay Payment Status:</strong> {% if is_paid %}Paid{% else %}<span class="failed-status text-danger">Not paid</span>{% endif %}</p>
+                    {%endif%}
+                    {% if transaction_amount %}
+                        <div class="alert alert-success" role="alert">
+                            <strong>Refunded amount:</strong>₹{{ transaction_amount }} has been refunded to your account.
+                        </div>
+                    {% endif %}
+                    
+                   
+                   
+                </div>
+                <div class="col-md-6">
+                    <h5>Shipping Address</h5>
+                    <p><strong>Name:</strong> {{ order.shipping_address.name }}</p>
+                    <p><strong>Phone:</strong> {{ order.shipping_address.phone_number }}</p>
+                    <p><strong>Address:</strong> {{ order.shipping_address.street }}, {{ order.shipping_address.city }}, {{ order.shipping_address.state }}, {{ order.shipping_address.country }}, {{ order.shipping_address.postal_code }}
+                    {% if is_paid or order.payment_method == 'cash_on_delivery' %}
+                    <div class="">
+                        <a href="{% url 'order_invoice' order.pk %}" class="btn btn-primary">View Invoice</a>
+                        
+                    </div>  
+                    {% endif %}
+                   
+
+
+                   
+                </div>
+               
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <h5>Order Items</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Order Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ item.product.image1.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 60px; height: 60px;">
+                                    </td>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>{{ item.product.description|truncatechars:50 }}</td> <!-- Limit description to 50 characters -->
+                                    <td>{{ item.quantity_ordered }} kg</td>
+                                    <td>
+                                        {% if item.product.offer %}
+                                            <del>₹{{ item.original_price_total }}</del>
+                                            ₹{{ item.total_price }}
+                                        {% else %}
+                                            ₹{{ item.total_price }} 
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ item.status }}
+                                    </td>
+                                    <td>
+                                        {% if item.status == 'Pending' or item.status == 'Processing' %}
+                                        {% if order.payment_method|lower == 'razorpay' %}
+                                            {% if not is_paid %}
+                                                <form id="orderDataForm" method="POST" action="{% url 'retry_razorpay' %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                                    <!-- Add other hidden fields for additional order data -->
+                                                    <button type="submit" class="btn btn-danger">Retry payment</button>
+                                                </form>
+                                            {% else %}
+                                                {% if item.has_cancellation_request %}
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancellationModal-{{ item.id }}" disabled>
+                                                        Request has been sent
+                                                    </button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancellationModal-{{ item.id }}">
+                                                        Request Cancellation
+                                                    </button>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% if item.has_cancellation_request %}
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancellationModal-{{ item.id }}" disabled>
+                                                    Request has been sent
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cancellationModal-{{ item.id }}">
+                                                    Request Cancellation
+                                                </button>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div>
+                    <a href="{% url 'orders' %}" class="btn btn-secondary">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for item in order.items.all %}
+<!-- Modal for each order item -->
+<div class="modal fade" id="cancellationModal-{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="cancellationModalLabel-{{ item.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancellationModalLabel-{{ item.id }}">Request Cancellation for Order Item #{{ item.id }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="cancellationForm-{{ item.id }}" method="post" action="{% url 'request_item_cancellation' item.id %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% block extra_js %}
+  <!-- Include jQuery and Bootstrap JavaScript libraries -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
+{% if existing_request %}
+    <script>
+        // Display an alert when a cancellation request already exists
+        alert("A cancellation request for this item has already been sent.");
+    </script>
+{% endif %}
+
+<style>
+    .card-body .row {
+        margin-bottom: 10px; /* Reduce bottom margin for rows */
+    }
+</style>
+
+{% endblock %}

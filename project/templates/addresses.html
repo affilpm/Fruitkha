@@ -1,0 +1,144 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% load static %}
+
+{% block content %}
+    <!-- Breadcrumb section -->
+    <div class="breadcrumb-section breadcrumb-bg" style="margin-bottom: 20px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>See more Details</p>
+                        <h1>Account</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Your Address</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item ">
+                        <a class="nav-link" href="{% url 'user_profile' %}">Profile </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Wallet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Addresses<span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Add New Address Section -->
+            <div class="col-md-12 mb-4">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <a href="{% url 'add_address' %}" class="btn btn-primary btn-lg btn-block">Add new address</a>
+    
+                        {% if came_from_checkout %}
+                            <a href="{% url 'checkout' %}" class="btn btn-success btn-lg btn-block">Proceed to Checkout</a>
+                        {% endif %}                
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Heading for Existing Addresses -->
+        <div class="row mt-4">
+            <div class="col-md-12 text-primary">
+                <h2>Existing Addresses</h2>
+            </div>
+        </div>
+
+        <div class="row mt-4" id="searchResults">
+            <!-- Existing Addresses Section -->
+            {% for address in addresses %}
+            <div class="col-md-6 mb-4">
+                <div class="address-box card border-primary">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ address.name }}</h4>
+                        <p class="card-text">{{ address.street }}</p>
+                        <p class="card-text">{{ address.city }}, {{ address.state }}, {{ address.country }}</p>
+                        <p class="card-text">{{ address.postal_code }}</p>
+                        <p class="card-text">{{ address.phone_number }}</p>
+                    </div>
+                    <div class="btn-group" style="position: absolute; top: 10px; right: 10px;" role="group" aria-label="Edit and Delete">
+                        <a href="{% url 'edit_address' address_id=address.id %}" class="btn btn-primary">Edit</a>
+
+
+                        <div class="mx-1"></div> <!-- Adjust the spacing by changing mx-1 -->
+                        <form action="{% url 'delete_address' address.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Checkout Button Section -->
+     
+    </div>
+
+
+
+<style>
+    .address-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<script>
+    // Validate form fields
+    document.getElementById("addAddressForm").addEventListener("submit", function(event) {
+        var name = document.getElementById("name").value.trim();
+        var street = document.getElementById("street").value.trim();
+        var city = document.getElementById("city").value.trim();
+        var state = document.getElementById("state").value.trim();
+        var country = document.getElementById("country").value.trim();
+        var postal_code = document.getElementById("postal_code").value.trim();
+        var phone_number = document.getElementById("phone_number").value.trim();
+        
+        if (name === "" || street === "" || city === "" || state === "" || country === "" || postal_code === "" || phone_number === "") {
+            event.preventDefault();
+            alert("Please fill out all fields.");
+            return;
+        }
+
+        // Additional validations for postal code and phone number
+        if (!/^\d+$/.test(postal_code) || postal_code.length !== 6) {
+            event.preventDefault();
+            alert("Postal code should contain exactly 6 digits.");
+            return;
+        }
+        if (!/^\d+$/.test(phone_number) || phone_number.length < 8 || phone_number.length > 15) {
+            event.preventDefault();
+            alert("Phone number should contain between 8 and 15 digits.");
+            return;
+        }
+    });
+</script>
+
+{% endblock %}

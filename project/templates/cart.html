@@ -1,0 +1,317 @@
+{% extends 'main_base.html' %}
+{% load static %}
+{% block content %}
+    
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>Fresh and Organic</p>
+                        <h1>Cart</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end breadcrumb section -->
+
+   
+<!-- cart -->
+<div class="cart-section mt-60 mb-60">
+    <div class="container">
+        <div class="row">
+            {% if cart_items %}
+            {% if cart_items %}
+            <div class="col-lg-8 col-md-12">
+                <div class="cart-table-wrap">
+                    <table class="cart-table">
+                        <thead class="cart-table-head">
+                            <tr class="table-head-row">
+                                <th scope="col">Image</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Subtotal</th>
+                                <th scope="col">Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            {% if item.quantity > 0 %}
+                            {% if item.available %}
+                            <tr class="table-head-row">
+                                <td class="text-center align-middle">
+                                    <img src="{{ item.product.image1.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 100px; height: 100px;">
+                                </td>
+                                <td>{{ item.product.name }}</td>
+                                <td>
+                                    <input type="number" class="quantity-input" data-product-id="{{ item.product.id }}" name="quantity" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}">
+                                </td>
+                                <td>{% if item.product.offer %}
+                                    <del>₹{{ item.product.original_price }}</del>
+                                    ₹{{ item.product.price }}
+                                {% else %}
+                                    ₹{{ item.product.price }} 
+                                {% endif %}</td>
+                                <td>₹{{ item.subtotal }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm remove-btn" data-product-id="{{ item.product.id }}">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <!-- Show product unavailable message -->
+                            <tr>
+                                <td colspan="6" class="text-center unavailable-message">Product "{{ item.product.name }}" is currently unavailable.</td>
+                            </tr>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-center total-cost">Total Cost: ₹{{ total_cost }}</p>
+                <p class="text-center">Total items in cart: {{ cart_items.count }}</p>
+            </div>
+            {% endif %}
+
+            <div class="col-lg-4">
+                <div class="total-section">
+                    <table class="total-table">
+                        <thead class="total-table-head">
+                            <tr class="table-total-row">
+                                <th>Total</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="total-data">
+                                <td><strong>Subtotal: </strong></td>
+                                <td>₹{{ total_cost }}</td>
+                            </tr>
+                            
+                            <tr class="total-data">
+                                <td><strong>Total: </strong></td>
+                                <td>₹{{ total_cost }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <form id="checkout-form" action="{% url 'checkout' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="cart-buttons">
+                            <button type="submit" class="boxed-btn checkout-btn">Proceed to Checkout</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+            </div>
+            {% else %}
+            <div class="col-lg-12 text-center">
+                <p class="empty-cart-message">Your cart is empty.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Additional Suggestions -->
+<div class="container text-center mt-5">
+    <div class="row mt-3">
+        <div class="col-md-4">
+            {% comment %} <img src="{% static 'assets/img/promo_banner_1.jpg' %}" alt="Promo Banner 1" class="img-fluid"> {% endcomment %}
+            <p>Discover exclusive deals and discounts</p>
+        </div>
+        <div class="col-md-4">
+            {% comment %} <img src="{% static 'assets/img/promo_banner_2.jpg' %}" alt="Promo Banner 2" class="img-fluid"> {% endcomment %}
+            <p>Explore our range of organic products</p>
+        </div>
+        <div class="col-md-4">
+            {% comment %} <img src="{% static 'assets/img/promo_banner_3.jpg' %}" alt="Promo Banner 3" class="img-fluid"> {% endcomment %}
+            <p>Connect with us on social media for updates</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        color: #333; /* Text color */
+    }
+    
+    .cart-section {
+        padding: 50px 0;
+    }
+    .cart-table-wrap {
+        overflow-x: auto;
+    }
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 20px;
+    }
+    .cart-table-head th {
+        padding: 10px;
+        text-align: left;
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+        color: #333; /* Table heading color */
+    }
+    .cart-table tbody tr td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    .cart-table tbody tr td:first-child {
+        width: 120px;
+    }
+    .cart-table tbody tr td input[type="number"] {
+        width: 50px;
+        text-align: center;
+    }
+    .cart-buttons {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .checkout-btn {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .checkout-btn:hover {
+        background-color: #45a049; /* Darker green */
+    }
+    .empty-cart-message {
+        font-style: italic;
+        color: #888; /* Empty cart message color */
+    }
+    .unavailable-message {
+        font-style: italic;
+        color: #ff0000; /* Unavailable product message color */
+    }
+</style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Check if the cookie contains the CSRF token
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // CSRF token
+    var csrftoken = getCookie('csrftoken');
+
+    // Submit form when quantity changes
+    $('.quantity-input').change(function() {
+        var productId = $(this).data('product-id');
+        var quantity = $(this).val();
+        updateCart(productId, quantity);
+    });
+
+    // Function to update cart via AJAX
+    function updateCart(productId, quantity) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'cart' %}",
+            headers: {
+                // Include the CSRF token in the headers
+                "X-CSRFToken": csrftoken
+            },
+            data: {
+                'product_id': productId,
+                'quantity': quantity
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Cart updated successfully!');
+                    location.reload(); // Reload the page after updating the cart
+                } else {
+                    alert('Failed to update cart.');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // Log error message
+            }
+        });
+    }
+
+    // Remove button click event
+    $('.remove-btn').click(function() {
+        var productId = $(this).data('product-id');
+        removeProduct(productId);
+    });
+
+    // Function to remove product from cart via AJAX
+    function removeProduct(productId) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'remove_from_cart' %}",
+            headers: {
+                // Include the CSRF token in the headers
+                "X-CSRFToken": csrftoken
+            },
+            data: {
+                'product_id': productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Item removed from cart successfully!');
+                    location.reload(); // Reload the page after removing the item from the cart
+                } else {
+                    alert('Failed to remove item from cart.');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText); // Log error message
+            }
+        });
+    }
+});
+</script>
+
+<style>
+    .image_container {
+        width: 100px; /* Set the desired width */
+        height: 60px; /* Set the desired height */
+        border: 1px solid #ccc; /* Add border */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        margin-left: 60px;
+    }
+    
+    .product_image {
+        max-width: 100%; /* Ensure image fits container */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Address</title>
+    <style>
+        /* Box styling */
+        .form-box {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Add your CSS styles here */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"] {
+            width: calc(100% - 12px); /* Adjust for padding */
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+        .error {
+            color: red;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            border: none;
+            border-radius: 4px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .btn-cancel {
+            background-color: #ccc;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h1>Add New Address</h1>
+        <form id="addAddressForm" method="post" action="{% url 'add_address_checkout' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+                <span class="error" id="nameError"></span>
+            </div>
+            <div class="form-group">
+                <label for="street">Street</label>
+                <input type="text" class="form-control" id="street" name="street">
+                <span class="error" id="streetError"></span>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" name="city">
+                <span class="error" id="cityError"></span>
+            </div>
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" class="form-control" id="state" name="state">
+                <span class="error" id="stateError"></span>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" class="form-control" id="country" name="country">
+                <span class="error" id="countryError"></span>
+            </div>
+            <div class="form-group">
+                <label for="postal_code">Postal Code</label>
+                <input type="text" class="form-control" id="postal_code" name="postal_code">
+                <span class="error" id="postalCodeError"></span>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number">
+                <span class="error" id="phoneNumberError"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Address</button>
+            <button type="button" class="btn btn-back" onclick="goBack()">Back</button>
+        </form>
+    </div>
+    
+    <script>
+        function validateForm() {
+            let isValid = true;
+
+            const name = document.getElementById("name").value.trim();
+            const street = document.getElementById("street").value.trim();
+            const city = document.getElementById("city").value.trim();
+            const state = document.getElementById("state").value.trim();
+            const country = document.getElementById("country").value.trim();
+            const postalCode = document.getElementById("postal_code").value.trim();
+            const phoneNumber = document.getElementById("phone_number").value.trim();
+
+            // Validate Name
+            if (name === "") {
+                document.getElementById("nameError").innerText = "Name is required";
+                isValid = false;
+            } else {
+                document.getElementById("nameError").innerText = "";
+            }
+
+            // Validate Street
+            if (street === "") {
+                document.getElementById("streetError").innerText = "Street is required";
+                isValid = false;
+            } else {
+                document.getElementById("streetError").innerText = "";
+            }
+
+            // Validate City
+            if (city === "") {
+                document.getElementById("cityError").innerText = "City is required";
+                isValid = false;
+            } else {
+                document.getElementById("cityError").innerText = "";
+            }
+
+            // Validate State
+            if (state === "") {
+                document.getElementById("stateError").innerText = "State is required";
+                isValid = false;
+            } else {
+                document.getElementById("stateError").innerText = "";
+            }
+
+            // Validate Country
+            if (country === "") {
+                document.getElementById("countryError").innerText = "Country is required";
+                isValid = false;
+            } else {
+                document.getElementById("countryError").innerText = "";
+            }
+
+            // Validate Postal Code
+            if (postalCode === "") {
+                document.getElementById("postalCodeError").innerText = "Postal Code is required";
+                isValid = false;
+            } else if (!/^\d{6}$/.test(postalCode)) {
+                document.getElementById("postalCodeError").innerText = "Postal Code must be 6 digits";
+                isValid = false;
+            } else {
+                document.getElementById("postalCodeError").innerText = "";
+            }
+
+            // Validate Phone Number
+            if (phoneNumber === "") {
+                document.getElementById("phoneNumberError").innerText = "Phone Number is required";
+                isValid = false;
+            } else if (!/^\d{8,15}$/.test(phoneNumber)) {
+                document.getElementById("phoneNumberError").innerText = "Invalid Phone Number";
+                isValid = false;
+            } else {
+                document.getElementById("phoneNumberError").innerText = "";
+            }
+
+            return isValid;
+        }
+
+        document.getElementById("addAddressForm").addEventListener("submit", function(event) {
+            if (!validateForm()) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+
+        function goBack() {
+            // Redirect to the checkout page
+            window.location.href = "{% url 'checkout' %}";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<!-- Toggle button for sidebar -->
+
+<div class="d-flex">
+    <div class="sidebar bg-black" id="sidebar">
+        <div class="list-group">
+            <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-dashboard-layout-32.png' %}" alt="Dashboard Logo" class="logo"> <span class="sidebar-text">Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-users-32.png' %}" alt="Users Logo" class="logo"> <span class="sidebar-text">Users</span>
+            </a>
+            <a href="{% url 'admin_categories' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-categorize-32.png' %}" alt="Categories Logo" class="logo"> <span class="sidebar-text">Categories</span>
+            </a>
+            <a href="{% url 'admin_product' %}" class="list-group-item list-group-item-action active">
+                <img src="{% static 'assets/images/icons8-products-32.png' %}" alt="Products Logo" class="logo"> <span class="sidebar-text">Products</span>
+            </a>
+            <a href="{% url 'admin_orders' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-logistics-32.png' %}" alt="Orders Logo" class="logo"> <span class="sidebar-text">Orders</span>
+            </a>
+            <a href="{% url 'admin_coupons' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-coupon-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Coupons</span>
+            </a>
+            <a href="{% url 'admin_offers' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Offers</span>
+            </a>
+            <a href="{% url 'review_cancellation_requests' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Cancellation request</span>
+            </a>
+        </div>
+        <div class="mt-auto text-center">
+            <button class="btn btn-primary mb-3" id="sidebarToggle"><img src="{% static 'assets/images/icons8-repeat-48.png' %}" alt="Coupons Logo" class="logo"></button>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="main-content ">
+    <div class="content p-4">
+                <a href="{% url 'add_product' %}" class="btn btn-primary mb-3">Add Product</a>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Product Management</h3>
+                    </div>
+                <div class="card-body">
+                    <!-- Search Form --> 
+                    <form action="" method="get" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="query" value="{{ query }}" class="form-control" placeholder="Search orders...">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                        <div class="table-responsive">
+                            <table class="table table-striped text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="px-5">ID</th>
+                                        <th class="px-5">Name</th>
+                                        <th class="px-5">Category</th>
+                                        <th class="px-5">Description</th>
+                                        <th class="px-5" colspan="3">Images</th> <!-- colspan="3" for three columns -->
+                                        <th class="px-5">Price($)</th>
+                                        <th class="px-5">Stock(kg)</th>
+                                        <th class="px-5">Edit</th>
+                                        <th class="px-5">List/Unlist</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Django template logic to render product data -->
+                                    {% for product in products %}
+                                    <tr>
+                                        <td class="px-5 text-center">{{ product.id }}</td>
+                                        <td class="px-5 text-center">{{ product.name }}</td>
+                                        <td class="px-5 text-center">{{ product.category.name }}</td>
+                                        <td class="px-5 text-center">{{ product.description|truncatechars:15 }}</td> <!-- Shorten description to 100 characters -->
+                                        <td class="px-2 text-center">
+                                            <div class="image-container">
+                                                {% if product.image1 %}
+                                                    <img src="{{ product.image1.url }}" alt="{{ product.name }}" class="product-image">
+                                                {% else %}
+                                                    No Image Available
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td class="px-2 text-center">
+                                            <div class="image-container">
+                                                {% if product.image2 %}
+                                                    <img src="{{ product.image2.url }}" alt="{{ product.name }}" class="product-image">
+                                                {% else %}
+                                                    No Image Available
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td class="px-2 text-center">
+                                            <div class="image-container">
+                                                {% if product.image3 %}
+                                                    <img src="{{ product.image3.url }}" alt="{{ product.name }}" class="product-image">
+                                                {% else %}
+                                                    No Image Available
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td class="px-5 text-center">₹{{ product.price }}</td>
+                                        <td class="px-5 text-center">{{ product.stock }} kg</td>
+                                        <td class="px-5 text-center">
+                                            <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                        </td>
+                                        <td class="px-5 text-center">
+                                            {% if product.is_listed %}
+                                                <form action="{% url 'unlist_product' product.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger btn-sm">Unlist</button>
+                                                </form>
+                                            {% else %}
+                                                <form action="{% url 'list_product' product.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-success btn-sm">List</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

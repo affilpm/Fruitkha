@@ -1,0 +1,25 @@
+<!-- logout.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="alert alert-success" role="alert">
+                    You have been successfully logged out.
+                </div>
+                <p>Would you like to log in again?</p>
+                <a href="{% url 'admin_login' %}" class="btn btn-primary">Login Again</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

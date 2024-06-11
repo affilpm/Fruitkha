@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="http://cdn.bokeh.org/bokeh/release/bokeh-0.9.0.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.bokeh.org/bokeh/release/bokeh-0.9.0.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+</head>
+<body style="background-color: #e9ecef;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Admin</a>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <span class="navbar-text text-white">Hello, {{request.user.username}}</span>
+            </li>
+            <li class="nav-item">
+                <form action="{% url 'logout_admin' %}" method="post">
+                    {% csrf_token %}
+                    <button type='submit' class="nav-link btn">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+    
+    {% block content %}
+    {% endblock %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* styles.css */
+        .sidebar {
+            width: 250px;
+            transition: width 0.3s;
+        }
+    
+        .sidebar.collapsed {
+            width: 80px;
+        }
+    
+        .sidebar .list-group-item {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    
+        .main-content {
+            transition: margin-left 0.3s;
+            margin-left: 250px;
+        }
+    
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+    
+        .collapsed .sidebar-text {
+            display: none;
+        }
+    
+        /* CSS */
+    #sidebarToggle {
+        background-size: contain; /* Adjust as needed */
+    }
+    
+    .sidebar img.logo {
+        width: 24px;
+        height: 24px;
+        margin-right: px;
+    }
+    </style>
+
+    
+    <style>
+        /* Custom CSS for adjusting sidebar position */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh; /* Full height */
+            width: 250px; /* Adjust as needed */
+            background-color: #343a40; /* Bootstrap dark color */
+            padding-top: 56px; /* Height of the navbar */
+            overflow-y: auto; /* Enable scrolling if content exceeds height */
+        }
+
+        .main-content {
+            margin-left: 250px; /* Same as sidebar width */
+            padding-top: 56px; /* Height of the navbar */
+        }
+
+        .image-container {
+            width: 90px; /* Set the desired width */
+            height: 60px; /* Set the desired height */
+            border: 1px solid #ccc; /* Add border */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            max-width: 100%; /* Ensure image fits container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Custom CSS for navbar */
+        .navbar {
+            background-color: #343a40; /* Bootstrap dark color */
+            color: white; /* Text color */
+        }
+
+        .navbar-brand {
+            color: white !important; /* Override default bootstrap color */
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important; /* Override default bootstrap color */
+        }
+        
+        .navbar-nav {
+            flex-direction: row; /* Align items horizontally */
+        }
+        
+        .navbar-text {
+            margin-right: 15px; /* Adjust spacing */
+        }
+    </style>
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            var sidebar = document.getElementById('sidebar');
+            var mainContent = document.querySelector('.main-content');
+            var sidebarTexts = document.querySelectorAll('.sidebar-text');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+            sidebarTexts.forEach(function(text) {
+                text.classList.toggle('hide');
+            });
+        });
+    </script>
+</body>
+</html>

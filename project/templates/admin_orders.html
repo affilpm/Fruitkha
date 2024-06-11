@@ -1,0 +1,107 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<!-- Toggle button for sidebar -->
+<div class="d-flex">
+    <div class="sidebar bg-black" id="sidebar">
+        <div class="list-group">
+            <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-dashboard-layout-32.png' %}" alt="Dashboard Logo" class="logo"> <span class="sidebar-text">Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-users-32.png' %}" alt="Users Logo" class="logo"> <span class="sidebar-text">Users</span>
+            </a>
+            <a href="{% url 'admin_categories' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-categorize-32.png' %}" alt="Categories Logo" class="logo"> <span class="sidebar-text">Categories</span>
+            </a>
+            <a href="{% url 'admin_product' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-products-32.png' %}" alt="Products Logo" class="logo"> <span class="sidebar-text">Products</span>
+            </a>
+            <a href="{% url 'admin_orders' %}" class="list-group-item list-group-item-action active">
+                <img src="{% static 'assets/images/icons8-logistics-32.png' %}" alt="Orders Logo" class="logo"> <span class="sidebar-text">Orders</span>
+            </a>
+            <a href="{% url 'admin_coupons' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-coupon-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Coupons</span>
+            </a>
+            <a href="{% url 'admin_offers' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Offers</span>
+            </a>
+            <a href="{% url 'review_cancellation_requests' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Cancellation request</span>
+            </a>
+        </div>
+        <div class="mt-auto text-center">
+            <button class="btn btn-primary mb-3" id="sidebarToggle"><img src="{% static 'assets/images/icons8-repeat-48.png' %}" alt="Coupons Logo" class="logo"></button>
+        </div>
+    </div>
+</div>
+
+
+<div class="main-content">
+    <div class="content p-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Order Management</h3>
+            </div>
+            <div class="card-body">
+                <form action="" method="get" class="mb-3">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="query" value="{{ query }}" class="form-control" placeholder="Search orders...">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer Name</th>
+                                <th>No of products</th>
+                                <th>Order Date</th>
+                                <th>Total Amount (₹)</th>
+                                <th>Payment Method</th>
+                                <th>Options</th> <!-- New column for options -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.user.username }}</td>
+                                <td>{{ order.total_products }}
+                                {% comment %} <td>{{ order.name }}, {{ order.street }}, {{ order.city }}, {{ order.state }}, {{ order.country }}, {{ order.postal_code }}</td> {% endcomment %}
+                                <td>{{ order.order_date }}</td>
+                                <td>₹{{ order.total_cost }}</td>
+                                <td>{{ order.payment_method }}</td>
+                                
+                                {% comment %} <td>
+                                    <form action="{% url 'admin_change_order_status' order.id %}" method="post">
+                                        {% csrf_token %}
+                                        <select name="status" class="form-control">
+                                            {% for status, status_display in order.ORDER_STATUS_CHOICES %}
+                                                <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status_display }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-success">Change Status</button>
+                                    </form> 
+                                </td> {% endcomment %}
+                                <td> <!-- New column for options -->
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'admin_order_items' order.id %}" class="btn btn-info">View Details</a>
+                                        <!-- Add button to view order items -->
+                                        {% comment %} <a href="" class="btn btn-secondary"></a> {% endcomment %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

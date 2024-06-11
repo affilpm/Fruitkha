@@ -1,0 +1,369 @@
+{% extends 'main_base.html'%}
+{% load static %}
+{% block content %}
+<!-- Breadcrumb section -->
+<div class="breadcrumb-section breadcrumb-bg" style="margin-bottom: 20px;"> <!-- Adjusted margin-bottom -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Explore More</p> <!-- Updated text for better clarity -->
+                    <h1>{{ product.name }}</h1> <!-- Display the product name in the breadcrumb -->
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<!-- End breadcrumb section -->
+
+<!-- Single product -->
+<div class="single-product mt-5 mb-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                {% if previous_page_url %}
+                    <li class="breadcrumb-item"><a href="{{ previous_page_url }}">Back</a></li> <!-- Updated label for the previous page link -->
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="productCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="{{ product.image1.url }}" alt="{{ product.name }}">
+                        </div>
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="{{ product.image2.url }}" alt="{{ product.name }}">
+                        </div>
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="{{ product.image3.url }}" alt="{{ product.name }}">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="single-product-content">
+                    <h2>{{ product.name }}</h2>
+                    <p class="single-product-pricing">
+                        <span>Price:</span>
+                        {% if product.offer %}
+                            <del>₹{{ product.original_price }}</del> ₹{{ product.price }}
+                        {% else %}
+                            ₹{{ product.price }}
+                        {% endif %}
+                    </p>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="single-product-form">
+                        <p><strong>Availability:</strong> {% if product.stock != 0 %}Available{% else %}Out of stock{% endif %}</p>
+                        <p><strong>Category:</strong> {{ product.category }}</p>
+                        <div class="action-buttons">
+                            {% if user.id %}
+                                {% if not out_of_stock %}
+                                {% if product_in_cart %}
+                                <a href="{% url 'cart' %}" class="cart-btn btn btn-primary">
+                                    <i class="fas fa-shopping-cart"></i> View Cart
+                                </a>
+                            {% else %}
+                                <form action="{% url 'add_to_cart' %}" method="post" id="cartForm" onsubmit="return validateCart()">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <button type="submit" class="cart-btn btn btn-primary" id="addToCartBtn" {% if not user.is_authenticated %}onclick="return promptSignIn(event)" {% endif %}>
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                    </button>
+                                </form>
+                            {% endif %}
+                            
+                            
+                                {% else %}
+                                    <p class="out-of-stock">This product is currently out of stock.</p>
+                                {% endif %}
+                            {% endif %}
+                        
+                            {% if user.id %}
+                                {% if not out_of_stock %}
+                                    <form action="{% if product_in_wishlist %}{% url 'remove_from_wishlist' %}{% else %}{% url 'add_to_wishlist' %}{% endif %}" method="post" id="wishlistForm">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                                        <button type="submit" class="wishlist-btn btn btn-info btn-sm" id="wishlistBtn" {% if not user.is_authenticated %}onclick="return promptSignIn(event)" {% endif %}>
+                                            {% if product_in_wishlist %}
+                                                <i class="fas fa-heart"></i> Remove from Wishlist
+                                            {% else %}
+                                                <i class="far fa-heart"></i> Add to Wishlist
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        
+                           
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End single product -->
+
+
+
+
+
+<!-- More products -->
+<div class="more-products mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">  
+                    <h3><span class="orange-text">Related</span> Products</h3>
+                    <p>Discover similar products</p> <!-- Updated description for better clarity -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for related_product in related_products %}
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="single-product-item">
+                        <div class="product-image">
+                            <a href="{% url 'single_product' related_product.id %}">
+                                <img src="{{ related_product.image1.url }}" alt="{{ related_product.name }}" width="200" height="200">
+                            </a>
+                        </div>
+                        <h3>{{ related_product.name }}</h3>
+                        <p class="product-price"><span>Per Kg</span> 
+                            {% if related_product.offer %}
+                                <del>₹{{ related_product.original_price }}</del> ₹{{ related_product.price }}
+                            {% else %}
+                                ₹{{ related_product.price }} 
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+</div>
+<!-- End more products -->
+
+	
+<style>
+    /* Set a specific height for the carousel */
+    #productCarousel .carousel-inner {
+        height: 400px; /* Adjust the height as needed */
+    }
+    
+    /* Set the dimensions of the images */
+    #productCarousel .carousel-item {
+        position: relative;
+    }
+    
+    #productCarousel .carousel-item img {
+        width: 100%;
+        height: 100%; /* This will maintain the aspect ratio */
+        object-fit: cover; /* Ensures the image covers the entire container */
+        border-radius: 10px; /* Add rounded corners to the image */
+    }
+    
+    /* Add shadow effect */
+    #productCarousel .carousel-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.2); /* Adjust the opacity of the shadow */
+        border-radius: 10px; /* Same as the image's border-radius */
+        z-index: 1; /* Ensure the shadow is behind the image */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+    }
+
+    /* Cart Button */
+    .cart-btn {
+        padding: 12px 24px; /* Adjusted padding for larger size */
+        font-size: 18px; /* Adjusted font size for larger text */
+        border: none;
+        background: none;
+        color: inherit;
+        text-decoration: underline;
+        font: inherit;
+        cursor: pointer;
+        border-radius: 30px; 
+    }
+
+    /* Optional: Increase icon size */
+    .cart-btn .fas {
+        font-size: 30px; /* Adjusted icon size */
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        margin-top: 10px; /* Adjust margin as needed */
+    }
+    
+    .action-buttons form,
+    .action-buttons a {
+        display: inline-block;
+        margin-right: 10px; /* Adjust margin between buttons as needed */
+    }
+
+    /* Button Styling */
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
+        border-radius: 30px; 
+    }
+    
+    /* Primary Button */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Secondary Button */
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    
+    /* Outline Primary Button */
+    .btn-outline-primary {
+        color: #007bff;
+        border: 2px solid #007bff;
+        background-color: transparent;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    
+    /* Wishlist Button */
+    .wishlist-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
+    }
+    
+    .wishlist-btn i {
+        margin-right: 5px;
+    }
+    
+    /* Add to Wishlist Button */
+    .wishlist-btn-add {
+        background-color: #28a745;
+        border: none;
+        color: #fff;
+    }
+    
+    .wishlist-btn-add:hover {
+        background-color: #218838;
+    }
+    
+    /* Remove from Wishlist Button */
+    .wishlist-btn-remove {
+        background-color: #dc3545;
+        border: none;
+        color: #fff;
+    }
+    
+    .wishlist-btn-remove:hover {
+        background-color: #c82333;
+    }
+    
+    /* Added to Cart Button */
+    .added-to-cart-btn {
+        background-color: #28a745;
+        border: none;
+        color: #fff;
+    }
+</style>
+
+
+
+
+	<script>
+		$(document).ready(function(){
+			$('#productCarousel').carousel();
+			$('.thumbnail').click(function(){
+				var index = $(this).index();
+				$('#productCarousel').carousel(index);
+			});
+		});
+	</script>
+		
+	
+    <script>
+        $(document).ready(function() {
+            // Logic to remove item from wishlist
+            $('.remove-from-wishlist').click(function() {
+                var productId = $(this).data('product-id');
+                removeFromWishlist(productId);
+            });
+    
+            function removeFromWishlist(productId) {
+                // Implement logic to remove the product from the wishlist (e.g., through AJAX)
+                // Upon successful removal, update the UI accordingly (remove the item from the wishlist)
+                // This function should communicate with your backend to remove the product from the user's wishlist
+                // and then update the UI accordingly (e.g., remove the item from the wishlist display)
+            }
+        });
+    </script>
+    
+
+    
+	<script>
+        function promptSignIn() {
+            alert('Please sign in to proceed.');
+        }
+    
+        function validateCart(event) {
+            // Check if user is authenticated
+            var isAuthenticated = {% if user.is_authenticated %}true{% else %}false{% endif %};
+    
+            if (!isAuthenticated) {
+                promptSignIn();
+                event.preventDefault(); // Prevent default action
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission if user is authenticated
+        }
+
+
+
+        
+    </script>
+
+
+
+	
+
+{% endblock %} 

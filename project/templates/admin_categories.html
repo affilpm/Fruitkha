@@ -1,0 +1,98 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<!-- Toggle button for sidebar -->
+
+<div class="d-flex">
+    <div class="sidebar bg-black" id="sidebar">
+        <div class="list-group">
+            <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-dashboard-layout-32.png' %}" alt="Dashboard Logo" class="logo"> <span class="sidebar-text">Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-users-32.png' %}" alt="Users Logo" class="logo"> <span class="sidebar-text">Users</span>
+            </a>
+            <a href="{% url 'admin_categories' %}" class="list-group-item list-group-item-action active">
+                <img src="{% static 'assets/images/icons8-categorize-32.png' %}" alt="Categories Logo" class="logo"> <span class="sidebar-text">Categories</span>
+            </a>
+            <a href="{% url 'admin_product' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-products-32.png' %}" alt="Products Logo" class="logo"> <span class="sidebar-text">Products</span>
+            </a>
+            <a href="{% url 'admin_orders' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-logistics-32.png' %}" alt="Orders Logo" class="logo"> <span class="sidebar-text">Orders</span>
+            </a>
+            <a href="{% url 'admin_coupons' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-coupon-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Coupons</span>
+            </a>
+            <a href="{% url 'admin_offers' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Offers</span>
+            </a>
+            <a href="{% url 'review_cancellation_requests' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Cancellation request</span>
+            </a>
+        </div>
+        <div class="mt-auto text-center">
+            <button class="btn btn-primary mb-3" id="sidebarToggle"><img src="{% static 'assets/images/icons8-repeat-48.png' %}" alt="Coupons Logo" class="logo"></button>
+        </div>
+    </div>
+</div>
+
+   
+<div class="main-content ">
+    <div class="content p-4">
+                   <a href="{% url 'add_category' %}" class="btn btn-primary mb-3">Add Category</a>
+                   <div class="card">
+                       <div class="card-header">
+                           Category Management
+                       </div>
+              
+                       <div class="card-body">
+                           <div class="table-responsive">
+                               <table class="table table-striped text-center">
+                                   <thead>
+                                       <tr>
+                                           <th class="px-5">ID</th>
+                                           <th class="px-5">Name</th>
+                                           <th class="px-5">Description</th> <!-- Added column for description -->
+                                           <th class="px-5">Edit</th>
+                                           <th class="px-5">List/Unlist</th>
+                                       </tr>
+                                   </thead>
+                                   <tbody>
+                                       <!-- Django template logic to render category data -->
+                                       {% for category in categories %}
+                                       <tr>
+                                           <td class="px-5 text-center">{{ category.id }}</td>
+                                           <td class="px-5 text-center">{{ category.name }}</td>
+                                           <td class="px-5 text-center">{{ category.description }}</td> <!-- Show description -->
+                                           <td class="px-5 text-center"><a href="{% url 'edit_category' category.id %}" class="btn btn-primary btn-sm">Edit</a></td>
+                                           <td class="px-5 text-center">
+                                               {% if category.is_listed %}
+                                               <form action="{% url 'unlist_category' category.id %}" method="post">
+                                                   {% csrf_token %}
+                                                   <button type="submit" class="btn btn-danger btn-sm">Unlist</button>
+                                               </form>
+                                               {% else %}
+                                               <form action="{% url 'list_category' category.id %}" method="post">
+                                                   {% csrf_token %}
+                                                   <button type="submit" class="btn btn-success btn-sm">List</button>
+                                               </form>
+                                               {% endif %}
+                                           </td>
+                                       </tr>
+                                       {% endfor %}
+                                   </tbody>
+                               </table>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   
+   </div>
+
+   
+   {% endblock %}
+   
+ 

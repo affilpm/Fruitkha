@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #otp-form {
+            width: 400px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .logo {
+            margin-bottom: 20px;
+            width: 200px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-verify {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #ffffff;
+        }
+        .btn-verify:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>OTP Verification</h2>
+        <form id="otp-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
+            </div>
+            <button type="submit" class="btn btn-lg btn-block btn-verify">Verify OTP</button>
+        </form>
+        {% if messages %}
+            <div id="error-message" class="alert alert-danger" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id="timer"></div>
+        <button id="resendOTP" class="btn btn-sm btn-secondary" style="display: none;">Resend OTP</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var remainingTime = {{ remaining_time }};
+            var timerElement = document.getElementById('timer');
+            var resendButton = document.getElementById('resendOTP');
+            var errorMessage = document.getElementById('error-message');
+
+            if (errorMessage) {
+                setTimeout(function() {
+                    errorMessage.style.display = 'none';
+                }, 5000); // Hide after 10 seconds
+            }
+
+            function updateTimer() {
+                if (remainingTime <= 0) {
+                    alert("Your OTP has expired. Please click 'Resend OTP' to receive a new OTP.");
+                    timerElement.innerText = "";
+                    resendButton.style.display = 'inline';
+                } else {
+                    timerElement.innerText = "Time remaining: " + remainingTime + " seconds";
+                    remainingTime--;
+                    setTimeout(updateTimer, 1000);
+                }
+            }
+
+            updateTimer();
+
+            resendButton.addEventListener('click', function () {
+                fetch('{% url 'resend_otp' %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('OTP resent successfully.');
+                        remainingTime = {{ remaining_time }};
+                        resendButton.style.display = 'none';
+                        updateTimer();
+                    } else {
+                        alert('Failed to resend OTP: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</body>
+</html>

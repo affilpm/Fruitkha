@@ -1,0 +1,213 @@
+{% extends 'main_base.html' %}
+{% load static %}
+
+{% block content %}
+    
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>Explore and Dream</p>
+                        <h1>Wishlist</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end breadcrumb section -->
+
+   <!-- Navigation bar -->
+   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">Your Wishlist</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'user_profile' %}">Profile <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'orders'%}">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'wallet' %}">Wallet</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'address' %}">Addresses</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+
+    <!-- wishlist -->
+    <div class="wishlist-section mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+                {% if wishlist_items %}
+                <div class="col-lg-12"> <!-- Full width -->
+                    <div class="wishlist-table-wrap">
+                        <table class="table table-bordered">
+                            <thead class="thead-dark text-center">
+                                <tr>
+                                    <th scope="col ">Image</th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in wishlist_items %}
+                                <tr>
+                                    <td class="text-center align-middle">
+                                        <img src="{{ item.product.image1.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 80px; height: 80px;">
+                                    </td>
+                                    <td class="text-center align-middle">{{ item.product.name }}</td>
+                                    <td class="text-center align-middle">
+                                        {% if item.product.offer %}
+                                        <del>₹{{ item.product.original_price }}</del>
+                                        ₹{{ item.product.price }}
+                                    {% else %}
+                                        ${{ item.product.price }} 
+                                    {% endif %}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                      
+                                    <!-- Example form for adding to cart from wishlist -->
+                                    <form action="{% url 'wishlist_to_cart' %}" method="post" id="cartForm" onsubmit="return validateCart()">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{ item.product.id }}"> <!-- Use item.product.id here -->
+                                        <button type="submit" class="cart-btn btn-color" id="addToCartBtn" {% if not user.is_authenticated %}onclick="return promptSignIn(event)" {% endif %}>
+                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                    
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-lg-12 text-center"> <!-- Full width -->
+                    <p class="empty-wishlist-message">Your wishlist is empty.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Suggestions -->
+    <div class="container text-center mt-5">
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <p>Discover exclusive deals and discounts</p>
+            </div>
+            <div class="col-md-4">
+                <p>Explore our range of organic products</p>
+            </div>
+            <div class="col-md-4">
+                <p>Connect with us on social media for updates</p>
+            </div>
+        </div>
+    </div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie contains the CSRF token
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // CSRF token
+        var csrftoken = getCookie('csrftoken');
+
+        // Add to cart button click event
+        $('.add-to-cart-btn').click(function() {
+            var productId = $(this).data('product-id');
+            addToCart(productId);
+        });
+
+        // Function to add product to cart via AJAX
+        function addToCart(productId) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'add_to_cart' %}",
+                headers: {
+                    // Include the CSRF token in the headers
+                    "X-CSRFToken": csrftoken
+                },
+                data: {
+                    'product_id': productId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Item added to cart successfully!');
+                        location.reload(); // Reload the page after adding the item to the cart
+                    } else {
+                        alert('Failed to add item to cart.');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // Log error message
+                }
+            });
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+    
+                fetch("{% url 'add_to_cart' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                    } else {
+                        alert('Error adding product to cart');
+                    }
+                });
+            });
+        });
+    });
+    </script>
+    {% endblock %}

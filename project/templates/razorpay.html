@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for Razorpay Button -->
+    <style>
+        /* Custom Styles for Razorpay Button */
+        .razorpay-payment-button {
+            background-color: #F37254; /* Background color */
+            color: #fff; /* Text color */
+            border: 2px solid #F37254; /* Border color */
+            border-radius: 5px; /* Border radius */
+            padding: 10px 20px; /* Padding */
+            font-size: 18px; /* Font size */
+            display: block; /* Make it a block element */
+            margin: 0 auto; /* Center horizontally */
+            text-decoration: none; /* Remove default text underline */
+        }
+
+        /* Hover effect */
+        .razorpay-payment-button:hover {
+            background-color: #FF934E; /* Hover background color */
+            border-color: #FF934E; /* Hover border color */
+        }
+
+        /* Additional Decorations */
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Card shadow */
+            border-radius: 10px; /* Card border radius */
+        }
+
+        .card-body {
+            padding: 100px; /* Card body padding */
+        }
+
+        .container {
+            background-color: #f8f9fa; /* Container background color */
+        }
+
+        /* Message Styles */
+        .alert {
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <!-- Razorpay Form -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="alert alert-danger error-message" role="alert">
+                    Please do not navigate away from this page until your payment is complete. Doing so may disrupt your order.
+                </div>
+                {% comment %} <div class="alert alert-success success-message" role="alert">
+                    Payment successful! Your order will be processed shortly.
+                </div>
+                <div class="alert alert-warning error-message" role="alert">
+                    Payment failed. Please try again or contact support for assistance.
+                </div> {% endcomment %}
+                <div class="card">
+                    <div class="card-body">
+                        {% if payment %}
+                        <form action="{% url 'payment_success' %}" method="POST">
+                            {% csrf_token %}
+                            <script
+                                src="https://checkout.razorpay.com/v1/checkout.js"
+                                data-key="{{razor_key_id}}"
+                                data-amount="{{ payment.amount }}"
+                                data-currency="INR"
+                                data-order_id="{{ payment.id }}"
+                                data-buttontext="Pay with Razorpay"
+                                data-name="Fruithka"
+                                data-description="Test"
+                                data-image="https://example.com/your_logo.jpg"
+                                data-prefill.name="Gaurav Kumar"
+                                data-prefill.email="gaurav.kumar@example.com"
+                                data-theme.color="#F37254"
+                                data-prefill.contact=""
+                                data-handler="onRazorpayPaymentComplete"
+                                data-modal.ondismiss="onRazorpayModalDismiss"
+                            ></script>
+                            <input type="hidden" custom="Hidden Element" name="hidden" />
+                            <!-- Add a visible button for fallback -->
+                            <div class="text-center mt-4">
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS and jQuery (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function onRazorpayPaymentComplete(response) {
+            // Redirect to the home page after payment completion
+            window.location.href = "/";
+        }
+
+        function onRazorpayModalDismiss() {
+            // Redirect to the home page when Razorpay modal dismisses after failed payment
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

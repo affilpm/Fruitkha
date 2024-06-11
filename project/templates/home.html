@@ -1,0 +1,491 @@
+{% extends 'main_base.html' %}
+
+{% load static %}
+
+
+
+{% block content%}
+	
+
+	<!-- home page slider -->
+	<div class="homepage-slider">
+		<!-- single home slider -->
+		<div class="single-homepage-slider homepage-bg-1">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 col-lg-7 offset-lg-1 offset-xl-0">
+						<div class="hero-text">
+							<div class="hero-text-tablecell">
+								<p class="subtitle">Fresh & Organic</p>
+								<h1>Delicious Seasonal Fruits</h1>
+								<div class="hero-btns">
+									<a href="shop.html" class="boxed-btn">Fruit Collection</a>
+									<a href="contact.html" class="bordered-btn">Contact Us</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- single home slider -->
+		<div class="single-homepage-slider homepage-bg-2">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-10 offset-lg-1 text-center">
+						<div class="hero-text">
+							<div class="hero-text-tablecell">
+								<p class="subtitle">Fresh Everyday</p>
+								<h1>100% Organic Collection</h1>
+								<div class="hero-btns">
+									<a href="shop.html" class="boxed-btn">Visit Shop</a>
+									<a href="contact.html" class="bordered-btn">Contact Us</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- single home slider -->
+		<div class="single-homepage-slider homepage-bg-3">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-10 offset-lg-1 text-right">
+						<div class="hero-text">
+							<div class="hero-text-tablecell">
+								<p class="subtitle">Mega Sale Going On!</p>
+								<h1>Get December Discount</h1>
+								<div class="hero-btns">
+									<a href="shop.html" class="boxed-btn">Visit Shop</a>
+									<a href="contact.html" class="bordered-btn">Contact Us</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end home page slider -->
+
+
+
+
+	
+	<!-- features list section -->
+	<div class="list-section pt-80 pb-80">
+		<div class="container">
+
+			<div class="row">
+				<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+					<div class="list-box d-flex align-items-center">
+						<div class="list-icon">
+							<i class="fas fa-shipping-fast"></i>
+						</div>
+						<div class="content">
+							<h3>Free Shipping</h3>
+							<p>When order over $75</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+					<div class="list-box d-flex align-items-center">
+						<div class="list-icon">
+							<i class="fas fa-phone-volume"></i>
+						</div>
+						<div class="content">
+							<h3>24/7 Support</h3>
+							<p>Get support all day</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="list-box d-flex justify-content-start align-items-center">
+						<div class="list-icon">
+							<i class="fas fa-sync"></i>
+						</div>
+						<div class="content">
+							<h3>Refund</h3>
+							<p>Get refund within 3 days!</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- end features list section -->
+
+
+<!-- product section -->
+<div class="product-section mt-5 mb-5">
+    <div class="container">
+        <!-- Search Bar and Product Heading -->
+        <div class="sticky-header mt-100 mb-100">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2 text-center">
+                        <div class="section-title">
+                            <h3><span class="orange-text">Our</span> Products</h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <form method="get" action="{% url 'home' %}" class="form-inline justify-content-center">
+                        <input type="text" class="form-control mr-2" name="search_name" placeholder="Search by name" value="{{ request.GET.search_name }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar for Filtering Options -->
+            <div class="col-lg-3" id="filter-sidebar">
+                <div class="sidebar">
+                    <form id="filter-form" method="GET">
+                        <!-- Filter by Category -->
+                        <div class="filter-category mb-4">
+                            <h5>Filter by Category</h5>
+                            <select class="form-control" name="filter_category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.name }}" {% if request.GET.filter_category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Filter by Price Range -->
+                        <div class="filter-price mb-4">
+                            <h5>Filter by Price Range</h5>
+                            <div class="form-row">
+                                <div class="col">
+                                    <input type="number" class="form-control" name="min_price" placeholder="Min price" value="{{ request.GET.min_price }}">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" name="max_price" placeholder="Max price" value="{{ request.GET.max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort by Price -->
+                        <div class="sort-price mb-4">
+                            <h5>Sort by Price</h5>
+                            <select class="form-control" name="sort_price">
+                                <option value="">Sort by price</option>
+                                <option value="lowest_to_highest" {% if request.GET.sort_price == 'lowest_to_highest' %}selected{% endif %}>Lowest to Highest</option>
+                                <option value="highest_to_lowest" {% if request.GET.sort_price == 'highest_to_lowest' %}selected{% endif %}>Highest to Lowest</option>
+                            </select>
+                        </div>
+
+                        <!-- Apply filters button -->
+                        <div class="apply-filters">
+                            <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- End Sidebar -->
+
+            <!-- Product Listings -->
+            <div class="col-lg-9" id="product-listings">
+                <div class="row">
+                    {% for product in products %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="single-product-item text-center">
+                                <div class="product-image">
+                                    <a href="{% url 'single_product' product.id %}">
+                                        <img src="{{ product.image1.url }}" alt="{{ product.name }}" width="200" height="200">
+                                    </a>
+                                </div>
+                                <h3>{{ product.name }}</h3>
+                                <p class="product-price"><span>Per Kg</span>
+                                    {% if product.offer %}
+                                        <del>₹{{ product.original_price }}</del>
+                                        ₹{{ product.price }}
+                                    {% else %}
+										₹{{ product.price }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- End Product Listings -->
+        </div>
+    </div>
+</div>
+<!-- end product section -->
+
+
+
+	<!-- cart banner section -->
+	<section class="cart-banner pt-100 pb-100">
+    	<div class="container">
+        	<div class="row clearfix">
+            	<!--Image Column-->
+            	<div class="image-column col-lg-6">
+                	<div class="image">
+                    	<div class="price-box">
+                        	<div class="inner-price">
+                                <span class="price">
+                                    <strong>30%</strong> <br> off per kg
+                                </span>
+                            </div>
+                        </div>
+                    	<img src="{% static 'assets/img/a.jpg'%}" alt="">
+                    </div>
+                </div>
+                <!--Content Column-->
+                <div class="content-column col-lg-6">
+					<h3><span class="orange-text">Deal</span> of the month</h3>
+                    <h4>Hikan Strwaberry</h4>
+                    <div class="text">Quisquam minus maiores repudiandae nobis, minima saepe id, fugit ullam similique! Beatae, minima quisquam molestias facere ea. Perspiciatis unde omnis iste natus error sit voluptatem accusant</div>
+                    <!--Countdown Timer-->
+                    <div class="time-counter"><div class="time-countdown clearfix" data-countdown="2020/2/01"><div class="counter-column"><div class="inner"><span class="count">00</span>Days</div></div> <div class="counter-column"><div class="inner"><span class="count">00</span>Hours</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Mins</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Secs</div></div></div></div>
+                	<a href="cart.html" class="cart-btn mt-3"><i class="fas fa-shopping-cart"></i> Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end cart banner section -->
+
+
+
+
+
+	<!-- testimonail-section -->
+	<div class="testimonail-section mt-150 mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 offset-lg-1 text-center">
+					<div class="testimonial-sliders">
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="assets/img/avaters/avatar1.png" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>Saira Hakim <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="assets/img/avaters/avatar2.png" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>David Niph <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+						<div class="single-testimonial-slider">
+							<div class="client-avater">
+								<img src="{% static 'assets/img/avaters/avatar3.png'%}" alt="">
+							</div>
+							<div class="client-meta">
+								<h3>Jacob Sikim <span>Local shop owner</span></h3>
+								<p class="testimonial-body">
+									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+								</p>
+								<div class="last-icon">
+									<i class="fas fa-quote-right"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end testimonail-section -->
+	
+
+
+
+	<!-- advertisement section -->
+	<div class="abt-section mb-150">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-md-12">
+					<div class="abt-bg">
+						<a href="https://www.youtube.com/watch?v=DBLlFWYcIGQ" class="video-play-btn popup-youtube"><i class="fas fa-play"></i></a>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-12">
+					<div class="abt-text">
+						<p class="top-sub">Since Year 1999</p>
+						<h2>We are <span class="orange-text">Fruitkha</span></h2>
+						<p>Etiam vulputate ut augue vel sodales. In sollicitudin neque et massa porttitor vestibulum ac vel nisi. Vestibulum placerat eget dolor sit amet posuere. In ut dolor aliquet, aliquet sapien sed, interdum velit. Nam eu molestie lorem.</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente facilis illo repellat veritatis minus, et labore minima mollitia qui ducimus.</p>
+						<a href="about.html" class="boxed-btn mt-4">know more</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end advertisement section -->
+	
+
+
+
+
+	<!-- shop banner -->
+	<section class="shop-banner">
+    	<div class="container">
+        	<h3>December sale is on! <br> with big <span class="orange-text">Discount...</span></h3>
+            <div class="sale-percent"><span>Sale! <br> Upto</span>50% <span>off</span></div>
+            <a href="shop.html" class="cart-btn btn-lg">Shop Now</a>
+        </div>
+    </section>
+	<!-- end shop banner -->
+
+
+
+
+
+
+	<!-- latest news -->
+	<div class="latest-news pt-150 pb-150">
+		<div class="container">
+
+			<div class="row">
+				<div class="col-lg-8 offset-lg-2 text-center">
+					<div class="section-title">	
+						<h3><span class="orange-text">Our</span> News</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, fuga quas itaque eveniet beatae optio.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-4 col-md-6">
+					<div class="single-latest-news">
+						<a href="single-news.html"><div class="latest-news-bg news-bg-1"></div></a>
+						<div class="news-text-box">
+							<h3><a href="single-news.html">You will vainly look for fruit on it in autumn.</a></h3>
+							<p class="blog-meta">
+								<span class="author"><i class="fas fa-user"></i> Admin</span>
+								<span class="date"><i class="fas fa-calendar"></i> 27 December, 2019</span>
+							</p>
+							<p class="excerpt">Vivamus lacus enim, pulvinar vel nulla sed, scelerisque rhoncus nisi. Praesent vitae mattis nunc, egestas viverra eros.</p>
+							<a href="single-news.html" class="read-more-btn">read more <i class="fas fa-angle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="single-latest-news">
+						<a href="single-news.html"><div class="latest-news-bg news-bg-2"></div></a>
+						<div class="news-text-box">
+							<h3><a href="single-news.html">A man's worth has its season, like tomato.</a></h3>
+							<p class="blog-meta">
+								<span class="author"><i class="fas fa-user"></i> Admin</span>
+								<span class="date"><i class="fas fa-calendar"></i> 27 December, 2019</span>
+							</p>
+							<p class="excerpt">Vivamus lacus enim, pulvinar vel nulla sed, scelerisque rhoncus nisi. Praesent vitae mattis nunc, egestas viverra eros.</p>
+							<a href="single-news.html" class="read-more-btn">read more <i class="fas fa-angle-right"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 offset-md-3 offset-lg-0">
+					<div class="single-latest-news">
+						<a href="single-news.html"><div class="latest-news-bg news-bg-3"></div></a>
+						<div class="news-text-box">
+							<h3><a href="single-news.html">Good thoughts bear good fresh juicy fruit.</a></h3>
+							<p class="blog-meta">
+								<span class="author"><i class="fas fa-user"></i> Admin</span>
+								<span class="date"><i class="fas fa-calendar"></i> 27 December, 2019</span>
+							</p>
+							<p class="excerpt">Vivamus lacus enim, pulvinar vel nulla sed, scelerisque rhoncus nisi. Praesent vitae mattis nunc, egestas viverra eros.</p>
+							<a href="single-news.html" class="read-more-btn">read more <i class="fas fa-angle-right"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<a href="news.html" class="boxed-btn">More News</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end latest news -->
+<style>
+	{% comment %} .sticky-header {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 0;
+		z-index: 1000;
+		background: white;
+		padding: 10px 0;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	} {% endcomment %}
+	
+	#filter-sidebar {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 120px; /* Adjust based on the height of the sticky header */
+		height: calc(100vh - 120px); /* Adjust based on the height of the sticky header */
+		overflow-y: auto;
+		padding-right: 15px;
+	}
+	
+	#product-listings {
+		padding-top: 20px;
+	}
+	
+	.single-product-item {
+		margin-bottom: 20px;
+	}
+	
+</style>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		const filterSidebar = document.getElementById("filter-sidebar");
+		const productListings = document.getElementById("product-listings");
+	
+		function adjustLayout() {
+			if (window.innerWidth < 992) {
+				filterSidebar.style.position = "relative";
+				filterSidebar.style.height = "auto";
+				productListings.style.marginTop = "20px";
+			} else {
+				filterSidebar.style.position = "sticky";
+				filterSidebar.style.top = "120px"; /* Adjust based on the height of the sticky header */
+				filterSidebar.style.height = "calc(100vh - 120px)"; /* Adjust based on the height of the sticky header */
+				productListings.style.marginTop = "0";
+			}
+		}
+	
+		window.addEventListener("resize", adjustLayout);
+		adjustLayout(); // Initial call on page load
+	});
+	
+</script>
+
+
+	<script>
+		// JavaScript to update form action URL with current query parameters
+		document.addEventListener('DOMContentLoaded', function() {
+			var form = document.getElementById('filter-form');
+			var currentUrl = window.location.href;
+			form.action = currentUrl;
+		});
+	</script>
+	
+{% endblock%}	
+
+
+

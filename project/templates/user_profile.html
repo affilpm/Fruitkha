@@ -1,0 +1,302 @@
+{% extends 'main_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Breadcrumb section -->
+<div class="breadcrumb-section breadcrumb-bg" style="margin-bottom: 20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>See more Details</p>
+                    <h1>Account</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+    
+      <!-- Navigation bar -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Your Profile</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders'%}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wallet' %}">Wallet</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'address' %}">Addresses</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+   
+    <!-- Profile and Wallet section -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Profile section -->
+            <div class="col-md-8">
+                <div class="card profile-card">
+                    <div class="card-body">
+                        <h2>Your Profile</h2>
+                        <div class="profile-info">
+                            <p><strong>Username:</strong> {{ user.username }} <button class="btn btn-primary edit-btn" data-toggle="modal" data-target="#editUsernameModal">Edit</button></p>
+                            <div class="divider"></div>
+                            <p><strong>First Name:</strong> {{ user.first_name }} <button class="btn btn-primary edit-btn" data-toggle="modal" data-target="#editFirstNameModal">Edit</button></p>
+                            <div class="divider"></div>
+                            <p><strong>Last Name:</strong> {{ user.last_name }} <button class="btn btn-primary edit-btn" data-toggle="modal" data-target="#editLastNameModal">Edit</button></p>
+                            <div class="divider"></div>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <div class="divider"></div>
+                            <p><strong>Phone:</strong> {{ user.phone }}</p>
+                        </div>
+                        <!-- Card footer -->
+                        <div class="card-footer">
+                            <button class="btn btn-secondary mr-2" onclick="location.href='{% url 'home' %}'">Back</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Wallet section -->
+            <div class="col-md-4">
+                <div class="card wallet-card">
+                    <div class="card-body">
+                        <h2>Your Wallet</h2>
+                        <div class="wallet-info">
+                            <!-- Add wallet information here -->
+                            <!-- For example: -->
+                            <p><strong>Balance:</strong> ${{ wallet.balance }}</p>
+                            <div class="divider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+
+<!-- Edit Username Modal -->
+<div class="modal fade" id="editUsernameModal" tabindex="-1" role="dialog" aria-labelledby="editUsernameModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUsernameModalLabel">Edit Username</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUsernameForm" method="POST" action="{% url 'edit_username' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="new-username">New Username:</label>
+                        <input type="text" class="form-control" id="new-username" name="new_username" placeholder="Enter new username">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Edit First Name Modal -->
+<div class="modal fade" id="editFirstNameModal" tabindex="-1" role="dialog" aria-labelledby="editFirstNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFirstNameModalLabel">Edit First Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editFirstNameForm" method="POST" action="{% url 'edit_first_name' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="new-first-name">New First Name:</label>
+                        <input type="text" class="form-control" id="new-first-name" name="new_first_name" placeholder="Enter new first name">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Last Name Modal -->
+<div class="modal fade" id="editLastNameModal" tabindex="-1" role="dialog" aria-labelledby="editLastNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLastNameModalLabel">Edit Last Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editLastNameForm" method="POST" action="{% url 'edit_last_name' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="new-last-name">New Last Name:</label>
+                        <input type="text" class="form-control" id="new-last-name" name="new_last_name" placeholder="Enter new last name">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="current_password">Current Password:</label>
+                        <input type="password" class="form-control" id="current_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">New Password:</label>
+                        <input type="password" class="form-control" id="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_new_password">Confirm New Password:</label>
+                        <input type="password" class="form-control" id="confirm_new_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#editUsernameForm').submit(function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            // Get the new username entered by the user
+            var newUsername = $('#new-username').val();
+            
+            // Send AJAX request to validate the new username
+            $.ajax({
+                url: "{% url 'edit_username' %}",
+                method: "POST",
+                data: {
+                    new_username: newUsername,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val() // Include CSRF token
+                },
+                success: function(response) {
+                    // If the new username is valid, update the field and close the modal
+                    if (response.success) {
+                        $('#username-display').html('<strong>Username:</strong> ' + newUsername + ' <button class="btn btn-primary" id="edit-username-btn" data-toggle="modal" data-target="#editUsernameModal">Edit</button>');
+                        $('#editUsernameModal').modal('hide'); // Close the modal
+                        // Redirect to user profile page
+                        window.location.href = "{% url 'user_profile' %}";
+                    } else {
+                        // If there are validation errors, display them as alerts
+                        var errorMessage = response.errors.join("\n");
+                        alert(errorMessage);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // If there's an error with the AJAX request, display a generic error message
+                    alert("An error occurred while processing your request.");
+                }
+            });
+        });
+    
+        // Other code for changing password...
+    });
+</script>
+
+
+<script>
+   
+        $('#changePasswordForm').submit(function(event) {
+            event.preventDefault(); // Prevent form submission
+            var currentPassword = $('#current_password').val();
+            var newPassword = $('#new_password').val();
+            var confirmNewPassword = $('#confirm_new_password').val();
+
+            // Validate that new password and confirm new password match
+            if (newPassword !== confirmNewPassword) {
+                alert('New password and confirm new password do not match.');
+                return;
+            }
+
+            // Send AJAX request to change password
+            $.ajax({
+                url: "{% url 'change_password' %}",
+                method: "POST",
+                data: {
+                    current_password: currentPassword,
+                    new_password: newPassword,
+                    confirm_new_password: confirmNewPassword,
+                    csrfmiddlewaretoken: '{{ csrf_token }}' // Include CSRF token
+                },
+                success: function(response) {
+                    // Handle success
+                    if (response.success) {
+                        // Show success message as an alert if response message is not empty
+                        if (response.message) {
+                            alert(response.message);
+                        }
+                        // Redirect to login page immediately
+                        window.location.href = "{% url 'user_login' %}"; 
+                        
+                    } else {
+                        // Show error message as an alert
+                        var errorAlert = alert(response.message);
+                        $(errorAlert).on('close.bs.alert', function () {
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    var errorAlert = alert(xhr.responseText);
+                    $(errorAlert).on('close.bs.alert', function () {
+                    });
+                }
+            });
+        });
+
+</script>
+
+{% endblock %}

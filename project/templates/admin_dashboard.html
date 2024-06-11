@@ -1,0 +1,243 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Sidebar -->
+<div class="d-flex">
+    <div class="sidebar bg-black" id="sidebar">
+        <div class="list-group">
+            <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action active">
+                <img src="{% static 'assets/images/icons8-dashboard-layout-32.png' %}" alt="Dashboard Logo" class="logo"> <span class="sidebar-text">Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-users-32.png' %}" alt="Users Logo" class="logo"> <span class="sidebar-text">Users</span>
+            </a>
+            <a href="{% url 'admin_categories' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-categorize-32.png' %}" alt="Categories Logo" class="logo"> <span class="sidebar-text">Categories</span>
+            </a>
+            <a href="{% url 'admin_product' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-products-32.png' %}" alt="Products Logo" class="logo"> <span class="sidebar-text">Products</span>
+            </a>
+            <a href="{% url 'admin_orders' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-logistics-32.png' %}" alt="Orders Logo" class="logo"> <span class="sidebar-text">Orders</span>
+            </a>
+            <a href="{% url 'admin_coupons' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-coupon-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Coupons</span>
+            </a>
+            <a href="{% url 'admin_offers' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Offers</span>
+            </a>
+            <a href="{% url 'review_cancellation_requests' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Cancellation request</span>
+            </a>
+        </div>
+        <div class="mt-auto text-center">
+            <button class="btn btn-primary mb-3" id="sidebarToggle"><img src="{% static 'assets/images/icons8-repeat-48.png' %}" alt="Coupons Logo" class="logo"></button>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="content p-4">
+        <!-- Sales Report Filter Form -->
+        <form method="get" action="" class="mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label for="interval" class="form-label">Interval:</label>
+                </div>
+                <div class="col-md-3">
+                    <select name="interval" id="report_interval" class="form-select">
+                        <option value="day" {% if interval == 'Day' %}selected{% endif %}>Day</option>
+                        <option value="week" {% if interval == 'Week' %}selected{% endif %}>Week</option>
+                        <option value="month" {% if interval == 'Month' %}selected{% endif %}>Month</option>
+                        <option value="year" {% if interval == 'Year' %}selected{% endif %}>Year</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary">Apply Filter</button>
+                </div>
+                <div class="col-md-auto">
+                    <a href="{% url 'report' %}" class="btn btn-success">View Sales Report</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <canvas id="myPieChart" class="w-100"></canvas>
+        </div>
+
+        <!-- Top Selling Products -->
+        <div class="top-selling-section mt-5">
+            <h2 class="mb-4">Top Selling Products</h2>
+            <div class="row">
+                {% if top_selling_products %}
+                    {% for product in top_selling_products %}
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">{{ product.product__name }}</h5>
+                                    <p class="card-text">Sold: {{ product.product_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col">
+                        <p class="text-muted">No data available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Top Selling Categories -->
+        <div class="top-selling-section mt-5">
+            <h2 class="mb-4">Top Selling Categories</h2>
+            <div class="row">
+                {% if top_selling_categories %}
+                    {% for category in top_selling_categories %}
+                        <div class="col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">{{ category.name }}</h5>
+                                    <p class="card-text">Sold: {{ category.product_count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col">
+                        <p class="text-muted">No data available</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+// Chart data
+let ctx = document.getElementById('myPieChart').getContext('2d');
+let myPieChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: {{ periods|safe }},
+        datasets: [{
+            label: "Orders",
+            backgroundColor: [
+                '#007bff',
+                '#28a745',
+                '#ffc107',
+                '#dc3545',
+                '#f8f9fa',
+                '#17a2b8',
+                '#343a40',
+                '#6c757d',
+                '#28a745',
+                '#17a2b8',
+                '#ffc107',
+                '#dc3545',
+                '#007bff',
+                '#6c757d',
+                '#28a745'
+            ],
+            borderColor: "#fff",
+            data: {{ orders_count|safe }}
+        }]
+    },
+    options: {
+        title: {
+            text: "Orders for {{ interval }} Comparison",
+            display: true,
+            fontColor: '#333',
+            fontSize: 18
+        },
+        // Adjust chart size options
+        aspectRatio: 2, // Set aspect ratio to maintain a square shape
+        layout: {
+            padding: {
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20
+            }
+        },
+        // Adjust scales options if needed
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: '{{ interval }}',
+                    fontColor: '#333',
+                    fontSize: 14
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Order Count',
+                    fontColor: '#333',
+                    fontSize: 14
+                }
+            }
+        }
+    }
+});
+</script>
+
+
+<style>
+    /* Additional styles for enhanced UI */
+    .card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-container {
+        margin-top: 20px;
+    }
+
+    /* Add custom styles for card images */
+    .card-img-top {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    /* Additional custom styles for better color usage */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #218838;
+    }
+
+    .text-muted {
+        color: #6c757d;
+    }
+
+    h2 {
+        color: #343a40;
+    }
+</style>
+
+{%endblock%}

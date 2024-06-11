@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
+
+	<!-- title -->
+	<title>Single Product</title>
+
+	<!-- favicon -->
+	<link rel="shortcut icon" type="image/png" href="{% static 'assets/img/favicon.png'%}">
+
+	{% block extra_css %}{% endblock %}
+	<!-- google font -->
+	<link href="{% static 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,700'%}" rel="stylesheet">
+	<link href="{% static 'https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap'%}" rel="stylesheet">
+	<!-- fontawesome -->
+	<link rel="stylesheet" href="{% static 'assets/css/all.min.css'%}">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css'%}">
+	<!-- owl carousel -->
+	<link rel="stylesheet" href="{% static 'assets/css/owl.carousel.css'%}">
+	<!-- magnific popup -->
+	<link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css'%}">
+	<!-- animate css -->
+	<link rel="stylesheet" href="{% static 'assets/css/animate.css'%}">
+	<!-- mean menu css -->
+	<link rel="stylesheet" href="{% static 'assets/css/meanmenu.min.css'%}">
+	<!-- main style -->
+	<link rel="stylesheet" href="{% static 'assets/css/main.css'%}">
+	<!-- responsive -->
+	<link rel="stylesheet" href="{% static 'assets/css/responsive.css'%}">
+
+	<!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+    <!-- Bootstrap JavaScript -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-zoom/1.7.21/jquery.zoom.min.js"></script>
+	
+
+
+</head>
+<body>
+
+		<!--PreLoader-->
+		<div class="loader">
+			<div class="loader-inner">
+				<div class="circle"></div>
+			</div>
+		</div>
+		<!--PreLoader Ends-->
+		
+		<!-- header -->
+		<div class="top-header-area" id="sticker">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-sm-12 text-center">
+						<div class="main-menu-wrap">
+							<!-- logo -->
+							
+							<div class="site-logo">
+								<a href=" {% url 'home'%} ">
+									<img src="{% static 'assets/img/logo.pn'%}g" alt="" class="small-image">
+
+								</a>
+								<h3>{{user.username}}</h3>
+							</div>
+
+							<!-- logo -->
+	                        
+							<!-- menu start -->
+							<nav class="main-menu">
+
+								<ul>
+									<li><a href="about.html">About</a></li>
+									<li><a href="customer_care.html">Customer service</a></li>
+									{% if user.is_authenticated and not user.is_superuser %}
+									<li>	
+										<a href="{% url 'user_profile' %}"><i class="fas fa-user"> </i></a>
+										<ul class="sub-menu">
+											<li><a href="{% url 'orders' %}">Your Orders</a></li>
+											<li><a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a></li>
+											<li><a href="{% url 'wallet' %}">Wallet</a></li>
+											<li><a href='{% url 'user_profile' %}'>Manage your Profile</a></li>
+											<li><a href="{% url 'address' %}">Your Addresses</a></li>
+											<li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i></a> </li>
+										</ul>
+									</li>
+									{%endif%}
+									<li>
+										<div class="header-icons">
+											{% if user.is_authenticated and not user.is_superuser %}
+											<a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a> 
+
+											{% else %}
+												<!-- If the user is not authenticated, show the login icon -->
+												<a class="login" href="{% url 'user_login' %}">LOGIN</a> 
+											{% endif %}
+											<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+										</div>
+									</li>
+								</ul>
+							</nav>
+							<a class="mobile-show search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+							<div class="mobile-menu"></div>
+							<!-- menu end -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end header -->
+		
+		<!-- search area -->
+		<div class="search-area">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<span class="close-btn"><i class="fas fa-window-close"></i></span>
+						<div class="search-bar">
+							<div class="search-bar-tablecell">
+								<h3>Search For:</h3>
+								<input type="text" placeholder="Keywords">
+								<button type="submit">Search <i class="fas fa-search"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end search area -->
+
+
+		
+		
+	{% block content  %} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} write your code here {% endcomment %}
+
+
+	{% endblock %}
+
+
+<!-- logo carousel -->
+	<div class="logo-carousel-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="logo-carousel-inner">
+						<div class="single-logo-item">
+							<img src="{% static 'assets/img/company-logos/1.png'%}" alt="">
+						</div>
+						<div class="single-logo-item">
+							<img src="{% static 'assets/img/company-logos/2.png'%}" alt="">
+						</div>
+						<div class="single-logo-item">
+							<img src="{% static 'assets/img/company-logos/3.png'%}" alt="">
+						</div>
+						<div class="single-logo-item">
+							<img src="{% static 'assets/img/company-logos/4.png'%}" alt="">
+						</div>
+						<div class="single-logo-item">
+							<img src="{% static 'assets/img/company-logos/5.png'%}" alt="">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- end logo carousel -->
+
+
+
+<!-- footer -->
+	<div class="footer-area">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3 col-md-6">
+					<div class="footer-box about-widget">
+						<h2 class="widget-title">About us</h2>
+						<p>Ut enim ad minim veniam perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.</p>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<div class="footer-box get-in-touch">
+						<h2 class="widget-title">Get in Touch</h2>
+						<ul>
+							<li>34/8, East Hukupara, Gifirtok, Sadan.</li>
+							<li>support@fruitkha.com</li>
+							<li>+00 111 222 3333</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<div class="footer-box pages">
+						<h2 class="widget-title">Pages</h2>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About</a></li>
+							<li><a href="services.html">Shop</a></li>
+							<li><a href="news.html">News</a></li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<div class="footer-box subscribe">
+						<h2 class="widget-title">Subscribe</h2>
+						<p>Subscribe to our mailing list to get the latest updates.</p>
+						<form action="index.html">
+							<input type="email" placeholder="Email">
+							<button type="submit"><i class="fas fa-paper-plane"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-- end footer -->
+	
+
+
+
+<!-- copyright -->
+	<div class="copyright">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-md-12">
+					<p>Copyrights &copy; 2019 - <a href="https://imransdesign.com/">Imran Hossain</a>,  All Rights Reserved.</p>
+				</div>
+				<div class="col-lg-6 text-right col-md-12">
+					<div class="social-icons">
+						<ul>
+							<li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+							<li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+ <!-- end copyright -->
+
+<!-- jquery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="{% static 'assets/js/jquery-1.11.3.min.js'%}"></script>
+<!-- bootstrap -->
+<script src="{% static 'assets/bootstrap/js/bootstrap.min.js'%}"></script>
+<!-- count down -->
+<script src="{% static 'assets/js/jquery.countdown.js'%}"></script>
+<!-- isotope -->
+<script src="{% static 'assets/js/jquery.isotope-3.0.6.min.js'%}"></script>    
+<!-- magnific popup -->
+<script src="{% static 'assets/js/jquery.magnific-popup.min.js'%}"></script>
+<!-- mean menu -->
+<script src="{% static 'assets/js/jquery.meanmenu.min.js'%}"></script>
+<!-- waypoints -->
+<script src="{% static 'assets/js/waypoints.js'%}"></script>
+<!-- owl carousel -->
+<script src="{% static 'assets/js/owl.carousel.min.js'%}"></script>
+
+<!-- sticker js -->
+<script src="{% static 'assets/js/sticker.js'%}"></script>
+<!-- main js -->
+<script src="{% static 'assets/js/main.js'%}"></script>
+
+<style>
+    .small-image {
+        width: 100px; /* Adjust width as needed */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+
+<style>
+    /* Add CSS for white color and gap */
+    .site-logo {
+        display: flex; /* Use flexbox */
+        align-items: center; /* Align items vertically */
+    }
+
+    .site-logo img {
+        margin-right: 20px; /* Add margin to the right of the image */
+    }
+
+    .site-logo h3 {
+        color: white; /* Set text color to white */
+        margin: 0; /* Remove default margin */
+    }
+</style>
+
+<style>
+    /* Custom CSS */
+    body {
+        background-color: #f8f9fa; /* Light gray background */
+        font-family: 'Arial', sans-serif;
+    }
+    .navbar {
+        padding: 1rem 0;
+        background-color: #007bff;
+    }
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+    }
+    .navbar-nav .nav-link {
+        color: #fff;
+        font-size: 1.1rem;
+    }
+    .profile-card, .wallet-card {
+        margin-top: 2rem;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff; /* White background */
+    }
+    .profile-card h2, .wallet-card h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        color: #007bff;
+        text-align: center; /* Center align heading */
+    }
+    .profile-info p, .wallet-info p {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        text-align: left; /* Left align text */
+    }
+    .profile-info p strong, .wallet-info p strong {
+        display: inline-block;
+        width: 150px; /* Fixed width for labels */
+    }
+    .edit-btn {
+        margin-left: 0.5rem;
+    }
+    .card-footer {
+        padding: 1rem;
+        text-align: right;
+        background-color: #f8f9fa; /* Light gray background */
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+    .btn-primary:hover, .btn-secondary:hover {
+        opacity: 0.9;
+    }
+    .divider {
+        border-bottom: 1px solid #e9ecef;
+        margin: 1rem 0;
+    }
+</style>
+</body>
+
+</html>

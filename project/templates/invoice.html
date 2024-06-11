@@ -1,0 +1,197 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+        body {
+            background-color: #f8f9fa;
+            font-size: 14px;
+        }
+        .invoice-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        .invoice-header, .invoice-footer {
+            margin-bottom: 20px;
+        }
+        .invoice-header {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .invoice-header h2 {
+            margin: 0;
+        }
+        .invoice-header img {
+            max-width: 180px;
+        }
+        .address-section, .billing-section {
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .table-responsive {
+            margin-bottom: 20px;
+        }
+        .subtotal-row, .discount-row, .total-row {
+            font-weight: bold;
+        }
+        .total-row {
+            font-size: 16px;
+            border-top: 2px solid #ddd;
+        }
+        @page {
+            size: auto;
+            margin: 10mm; /* Adjust margins for print */
+        }
+    </style>
+</head>
+<body>
+    <section class="py-3 py-md-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8 col-xl-7 col-xxl-7">
+                    <div class="invoice-container">
+                        <div class="row invoice-header">
+                            <div class="col-6">
+                            <h2 class="text-uppercase m-0">Invoice</h2>
+                        </div>
+                        <div class="col-6 text-end">
+                            <img src="{% static 'assets/img/logo.png' %}" alt="Fruitkha Logo" class="img-fluid" style="max-width: 180px;">
+                        </div>
+                    </div>
+                    <div class="row address-section">
+                        <div class="col-12">
+                            <h4>From</h4>
+                            <address>
+                                <strong>Fruitkha</strong><br>
+                                875 N Coast Hwy<br>
+                                Laguna Beach, California, 92651<br>
+                                United States<br>
+                                Phone: (949) 494-7695<br>
+                                Email: email@domain.com
+                            </address>
+                        </div>
+                    </div>
+                    <div class="row billing-section">
+                        <div class="col-12 col-sm-6 col-md-8">
+                            <h4>Bill To</h4>
+                            <address>
+                                <strong>{{ order.shipping_address.name }}</strong><br>
+                                {{ order.shipping_address.street }}<br>
+                                {{ order.shipping_address.city }}, {{ order.shipping_address.state }}, {{ order.shipping_address.postal_code }}<br> 
+                                {{ order.shipping_address.country }}<br>
+                                Phone: {{ order.shipping_address.phone_number }}<br>
+                                Email: {{ order.user.email }}
+                            </address>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <h4 class="row">
+                                <span class="col-6">Invoice #</span>
+                                <span class="col-6 text-end">INT-{{ order.id }}</span>
+                            </h4>
+                            <div class="row">
+                                <span class="col-6">Account</span>
+                                <span class="col-6 text-end">{{ order.user }}</span>
+                                <span class="col-6">Order ID</span>
+                                <span class="col-6 text-end">#{{ order.pk }}</span>
+                                <span class="col-6">Invoice Date</span>
+                                <span class="col-6 text-end">{{ order.order_date }}</span>
+                                <span class="col-6">Payment method</span>
+                                <span class="col-6  text-end">{{ order.payment_method }}</span>
+                                <span class="col-6 ">
+                                    {% if order.payment_method|lower == 'razorpay' %}
+                                    Payment status
+                                    {% endif %}
+                                </span>
+                                <span class="col-6 text-end"> 
+                                {% if order.payment_method|lower == 'razorpay' %}
+                                    {% if is_paid %}Paid{% else %}Not paid{% endif %}
+                                {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="text-uppercase text-center">#</th>
+                                            <th scope="col" class="text-uppercase text-center">Qty</th>
+                                            <th scope="col" class="text-uppercase text-center">Product</th>
+                                            <th scope="col" class="text-uppercase text-center">Status</th>
+                                            <th scope="col" class="text-uppercase text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-group-divider">
+                                        {% for item in order.items.all %}
+                                        <tr>
+                                            <td class="text-center">{{ forloop.counter }}</td>
+                                            <td class="text-center">{{ item.quantity_ordered }}</td>
+                                            <td>{{ item.product.name }}</td>
+                                            <td class="text-center">
+                                                {% if item.status == 'Delivered' %}
+                                                    Paid
+                                                {% else %}
+                                                    Pending
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">₹{{ item.total_price }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="subtotal-row">
+                                            <td colspan="3" class="text-end">Subtotal:</td>
+                                            <td></td>
+                                            <td class="text-end">₹{{ order.subtotal }}</td>
+                                        </tr>
+                                        <tr class="discount-row">
+                                            <td colspan="3" class="text-end">Discount:</td>
+                                            <td></td>
+                                            <td class="text-end">
+                                                {% if order.coupon %}
+                                                    -₹{{ order.coupon.discount_amount }}
+                                                {% else %}
+                                                    $0.00
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr class="total-row">
+                                            <td colspan="3" class="text-uppercase text-end">Total:</td>
+                                            <td></td>
+                                            <td class="text-end">${{ order.total_cost }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="row invoice-footer">
+                        <div class="col-12 text-end no-print">
+                            <button type="button" class="btn btn-primary mb-3" onclick="window.print()">Download Invoice</button>
+                            <a href="{% url 'orders' %}" class="btn btn-danger mb-3">Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

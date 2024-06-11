@@ -1,0 +1,211 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<!-- Sidebar -->
+<div class="d-flex">
+    <div class="sidebar bg-black" id="sidebar">
+        <div class="list-group">
+            <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action active">
+                <img src="{% static 'assets/images/icons8-dashboard-layout-32.png' %}" alt="Dashboard Logo" class="logo"> <span class="sidebar-text">Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-users-32.png' %}" alt="Users Logo" class="logo"> <span class="sidebar-text">Users</span>
+            </a>
+            <a href="{% url 'admin_categories' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-categorize-32.png' %}" alt="Categories Logo" class="logo"> <span class="sidebar-text">Categories</span>
+            </a>
+            <a href="{% url 'admin_product' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-products-32.png' %}" alt="Products Logo" class="logo"> <span class="sidebar-text">Products</span>
+            </a>
+            <a href="{% url 'admin_orders' %}" class="list-group-item list-group-item-action">
+                <img src="{% static 'assets/images/icons8-logistics-32.png' %}" alt="Orders Logo" class="logo"> <span class="sidebar-text">Orders</span>
+            </a>
+            <a href="{% url 'admin_coupons' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-coupon-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Coupons</span>
+            </a>
+            <a href="{% url 'admin_offers' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Offers</span>
+            </a>
+            <a href="{% url 'review_cancellation_requests' %}" class="list-group-item list-group-item-action ">
+                <img src="{% static 'assets/images/icons8-sale-32.png' %}" alt="Coupons Logo" class="logo"> <span class="sidebar-text">Cancellation request</span>
+            </a>
+        </div>
+        <div class="mt-auto text-center">
+            <button class="btn btn-primary mb-3" id="sidebarToggle"><img src="{% static 'assets/images/icons8-repeat-48.png' %}" alt="Coupons Logo" class="logo"></button>
+        </div>
+    </div>
+</div>
+
+
+<div class="main-content">
+    <div class="content p-4">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary btn-back-to-dashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        
+        <!-- Sales Report Section -->
+        <div class="sales-report-section">
+            <h1 class="mb-4">Sales Report</h1>
+
+            <form method="get" action="" class="mb-4" id="sales-report-form">
+                <div class="text-right">
+                        <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+                        <button type="button" class="btn btn-primary" onclick="printExcel()">Download as Excel</button>
+
+                </div>
+                <div class="row align-items-center mt-4">
+                    <div class="col-auto">
+                        <label for="interval" class="form-label">Interval:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select name="interval" id="report_interval" class="form-select">
+                            <option value="day" {% if interval == 'Day' %}selected{% endif %}>Day</option>
+                            <option value="week" {% if interval == 'Week' %}selected{% endif %}>Week</option>
+                            <option value="month" {% if interval == 'Month' %}selected{% endif %}>Month</option>
+                            <option value="year" {% if interval == 'Year' %}selected{% endif %}>Year</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Total Sales Report Card -->
+        <div class="card mb-4 total-sales-card">
+            <div class="card-body">
+                <h2 class="card-title">Total Sales Report ({{ interval }})</h2>
+                <p class="card-text"><strong>Period:</strong> {{ start_date|date:"F d, Y" }} - {{ end_date|date:"F d, Y" }}</p>
+                <p class="card-text"><strong>Total Sales:</strong> ₹{{ total_sales }}</p>
+                <p class="card-text"><strong>Products Sold:</strong> {{ products_sold_count }}</p>
+                <p class="card-text"><strong>Coupons Used:</strong> {{ coupons_used_count }}</p> 
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <h2 class="mb-4">Orders</h2>
+        <div class="table-responsive">
+            <table id="order-table" class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Products Ordered</th>
+                        <th>Subtotal</th>
+                        <th>Coupon Discount</th>
+                        <th>Offer Applied</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr> 
+                        <td>{{ order.id }}</td>
+                        <td>
+                            <ul class="list-unstyled">
+                                {% for item in order.order_items %}
+                                <li>{{ item.product.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>₹{{ order.subtotal }}</td>
+                        <td>{% if order.coupon %}₹{{ order.coupon.discount_amount }}{% else %}None{% endif %}</td>
+                        <td>{% if order.order_items.first.offer %}{{ order.order_items.first.offer.description }}{% else %}None{% endif %}</td>
+                        <td>₹{{ order.total_cost }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    function printExcel() {
+        var interval = document.getElementById('report_interval').value;
+        var excelUrl = "{% url 'report' %}?interval=" + interval + "&download=1";
+        window.open(excelUrl, '_blank');
+    }
+</script>
+
+<style>
+    /* Hide sidebar and buttons when printing */
+@media print {
+    .d-flex #sidebar {
+        display: none !important;
+    }
+
+    .btn-back-to-dashboard {
+        display: none !important;
+    }
+
+    .sales-report-section button {
+        display: none !important;
+    }
+    form.mb-4 {
+        display: none !important;
+    }
+}
+</style>
+
+<script>
+    function printTable() {
+        var interval = document.getElementById('report_interval').value;
+        var printUrl = "{% url 'report' %}?interval=" + interval;
+        window.open(printUrl, '_blank');
+    }
+</script>
+<style>
+    /* Sales Report Section */
+    .sales-report-section {
+        margin-bottom: 20px;
+    }
+
+    /* Total Sales Report Card */
+    .total-sales-card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+    }
+
+    .total-sales-card .card-title {
+        color: #333;
+    }
+
+    .total-sales-card .card-text {
+        color: #666;
+    }
+
+    /* Back to Dashboard Button */
+    .btn-back-to-dashboard {
+        margin-bottom: 20px;
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .btn-back-to-dashboard:hover {
+        background-color: #23272b;
+        color: #fff;
+    }
+
+    .btn-back-to-dashboard i {
+        margin-right: 5px;
+    }
+
+    /* Table Styling */
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .table th {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+</style>
+{% endblock %}

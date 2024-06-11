@@ -1,0 +1,64 @@
+{% extends 'main_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Breadcrumb section -->
+<div class="breadcrumb-section breadcrumb-bg" style="margin-bottom: 20px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>See more Details</p>
+                    <h1>Account</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">Your Profile</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'user_profile' %}">Profile <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'orders'%}">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'wallet' %}">Wallet</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'wishlist' %}">Wishlist</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'address' %}">Addresses</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+</nav>
+    <div class="row">
+        {% comment %} <div class="col-md-8 offset-md-2"> {% endcomment %}
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    
+                </div>
+                <div class="card-body">
+                    <p>Your current wallet balance is: <strong>₹{{ wallet.balance }}</strong></p>
+                </div>
+            </div>
+
+           
+        </div>
+    </div>
+</div>
+
+{% endblock %}
