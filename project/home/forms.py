@@ -99,7 +99,7 @@ class AddressForm(forms.ModelForm):
         postal_code = self.cleaned_data.get('postal_code')
         if not isinstance(postal_code, str) or not postal_code.isdigit():
             raise forms.ValidationError("Please enter a valid postal code (only digits).")
-        if len(postal_code) != 6:  # Assuming postal code should be 6 digits
+        if len(postal_code) != 6:  
             raise forms.ValidationError("Postal code should be exactly 6 digits.")
         return postal_code
 
@@ -107,7 +107,7 @@ class AddressForm(forms.ModelForm):
         phone_number = self.cleaned_data.get('phone_number')
         if not isinstance(phone_number, str) or not phone_number.isdigit():
             raise forms.ValidationError("Please enter a valid phone number (only digits).")
-        if len(phone_number) < 8 or len(phone_number) > 15:  # Assuming phone number length constraints
+        if len(phone_number) < 8 or len(phone_number) > 15: 
             raise forms.ValidationError("Phone number should be between 8 and 15 digits.")
         return phone_number
 
@@ -138,7 +138,10 @@ class CategoryForm(forms.ModelForm):
         cleaned_data = super().clean()
         name = cleaned_data.get('name')
         if name:
+            # Exclude the current instance if it exists
             existing_names = Category.objects.filter(name__iexact=name)
+            if self.instance.pk:
+                existing_names = existing_names.exclude(pk=self.instance.pk)
             if existing_names.exists():
                 self.add_error('name', 'Category with this name already exists.')
         return cleaned_data
