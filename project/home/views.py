@@ -925,8 +925,10 @@ def admin_order_items(request, order_id):
     order_items = OrderItem.objects.filter(order=order).order_by('id')
     for item in order_items:
         item.product = item.product  
+        razorpay_order = order.razorpay_order
+        is_paid = razorpay_order.paid if razorpay_order else False    
 
-    return render(request, 'admin_order_items.html', {'order': order, 'order_items': order_items})
+    return render(request, 'admin_order_items.html', {'order': order, 'order_items': order_items,'is_paid': is_paid})
 
 
 
