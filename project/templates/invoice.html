@@ -113,11 +113,18 @@
                                 <span class="col-6">Payment method</span>
                                 <span class="col-6  text-end">{{ order.payment_method }}</span>
                                 <span class="col-6 ">
-                                    {% if order.payment_method|lower == 'razorpay' %}
+                                    
                                     Payment status
-                                    {% endif %}
                                 </span>
                                 <span class="col-6 text-end"> 
+                                {% if order.payment_method|lower == 'cash_on_delivery' %}
+                                {% if item.status == 'Delivered' %}
+                                    Paid
+                                {% else %}
+                                    Pending
+                                {% endif %}
+                                {% endif %}
+
                                 {% if order.payment_method|lower == 'razorpay' %}
                                     {% if is_paid %}Paid{% else %}Not paid{% endif %}
                                 {% endif %}
