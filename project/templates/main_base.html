@@ -79,8 +79,9 @@
 							<nav class="main-menu">
 
 								<ul>
-									<li><a href="about.html">About</a></li>
-									<li><a href="customer_care.html">Customer service</a></li>
+									<li><a href="{% url 'home' %}">Home</a></li>
+									<li><a href="#">About</a></li>
+									<li><a href="#">Customer service</a></li>
 									{% if user.is_authenticated and not user.is_superuser %}
 									<li>	
 										<a href="{% url 'user_profile' %}"><i class="fas fa-user"> </i></a>
