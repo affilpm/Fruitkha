@@ -934,6 +934,8 @@ def admin_order_items(request, order_id):
 
 
 
+
+
 @staff_member_required(login_url='admin_login')
 def admin_change_order_status(request, item_id):
     item = get_object_or_404(OrderItem, id=item_id)
@@ -941,8 +943,29 @@ def admin_change_order_status(request, item_id):
     if request.method == 'POST':
         new_status = request.POST.get('status')
         if new_status in dict(item.ORDER_STATUS_CHOICES):
-            item.status = new_status
-            item.save()
+            if new_status == 'Cancelled' and item.status != 'Cancelled':
+                item.status = 'Cancelled'
+                item.save()
+                
+                if item.order.payment_method.lower() == 'razorpay':
+                    try:
+                        user_wallet, created = Wallet.objects.get_or_create(user=item.order.user)
+                        user_wallet.balance += item.total_price
+                        user_wallet.save()
+                        
+                        Transaction.objects.create(
+                            user=item.order.user,
+                            amount=item.total_price,
+                            transaction_type='Refund',
+                            order=item.order
+                        )
+                    except Exception as e:
+                        messages.error(request, f'Error processing refund: {e}')
+                
+            else:
+                item.status = new_status
+                item.save()
+                
             messages.success(request, 'Order item status updated successfully.')
         else:
             messages.error(request, 'Invalid order item status.')
@@ -988,7 +1011,6 @@ def approve_cancellation_request(request, request_id):
                         order_id=order_item.order.id
                     )
                 except Wallet.DoesNotExist:
-                    # Handle case where user's wallet doesn't exist
                     pass
         
     return redirect('review_cancellation_requests')
