@@ -70,13 +70,27 @@ def is_not_superuser(user):
 #############home  ####################################home ############################home############################3  
 
 
+@never_cache
+def home(request):
+    
+    products = Product.objects.all()
+    categories = Category.objects.all()
+
+    products = Product.objects.filter(stock__gt=0)[:6]
+    
+    context = {
+        'products': products,
+        'categories': categories,
+    }
+
+    return render(request, 'home.html', context)
 
 
 
 
 
 @never_cache
-def home(request):
+def shop(request):
     categories = Category.objects.all()
     products = Product.objects.filter(is_listed=True)
 
@@ -99,15 +113,19 @@ def home(request):
     elif sort_price == 'highest_to_lowest':
         products = products.order_by('-price')
 
-    return render(request, 'home.html', {'products': products, 'categories': categories})
+    return render(request, 'shop.html', {'products': products, 'categories': categories})
 
 
  
  
- 
+@never_cache
+def about(request):
+    return render(request, 'about.html')
+    
+    
 
-
-
+def customer_service(request):
+    return render(request, 'contact.html')
 
 #########address#############################address###########################address########################################################
 
@@ -1040,15 +1058,22 @@ def generate_coupon_code(length=10):
 
 
 def add_coupon(request):
-    generated_code = generate_coupon_code()  
+    generated_code = generate_coupon_code()
+    initial_data = {
+        'code': generated_code,
+        'valid_from': timezone.now(),
+    }
+
     if request.method == 'POST':
         form = CouponForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('admin_coupons') 
+            return redirect('admin_coupons')
     else:
-        form = CouponForm(initial={'code': generated_code})  
-    return render(request, 'add_coupon.html', {'form': form, 'generated_code': generated_code})  
+        form = CouponForm(initial=initial_data)
+    
+    return render(request, 'add_coupon.html', {'form': form, 'generated_code': generated_code})
+
 
 
 @staff_member_required(login_url='admin_login')

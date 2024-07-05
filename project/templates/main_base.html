@@ -80,8 +80,11 @@
 
 								<ul>
 									<li><a href="{% url 'home' %}">Home</a></li>
-									<li><a href="#">About</a></li>
-									<li><a href="#">Customer service</a></li>
+									<li><a href="{% url 'about' %}">About</a></li>
+									<li><a href="{% url 'shop' %}">Shop</a></li>
+
+									
+									<li><a href="{% url 'customer_service' %}">Customer service</a></li>
 									{% if user.is_authenticated and not user.is_superuser %}
 									<li>	
 										<a href="{% url 'user_profile' %}"><i class="fas fa-user"> </i></a>
@@ -104,12 +107,12 @@
 												<!-- If the user is not authenticated, show the login icon -->
 												<a class="login" href="{% url 'user_login' %}">LOGIN</a> 
 											{% endif %}
-											<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+											{% comment %} <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a> {% endcomment %}
 										</div>
 									</li>
 								</ul>
 							</nav>
-							<a class="mobile-show search-bar-icon" href="#"><i class="fas fa-search"></i></a>
+							{% comment %} <a class="mobile-show search-bar-icon" href="#"><i class="fas fa-search"></i></a> {% endcomment %}
 							<div class="mobile-menu"></div>
 							<!-- menu end -->
 						</div>
@@ -247,7 +250,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-6 col-md-12">
-					<p>Copyrights &copy; 2019 - <a href="https://imransdesign.com/">Imran Hossain</a>,  All Rights Reserved.</p>
+					<p>Copyrights &copy; 2019 ,  All Rights Reserved.</p>
 				</div>
 				<div class="col-lg-6 text-right col-md-12">
 					<div class="social-icons">

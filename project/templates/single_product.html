@@ -23,6 +23,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop' %}">Shop</a></li>
                 {% if previous_page_url %}
                     <li class="breadcrumb-item"><a href="{{ previous_page_url }}">Back</a></li> <!-- Updated label for the previous page link -->
                 {% endif %}
@@ -69,6 +70,7 @@
                         <p><strong>Availability:</strong> {% if product.stock != 0 %}Available{% else %}Out of stock{% endif %}</p>
                         <p><strong>Category:</strong> {{ product.category }}</p>
                         <div class="action-buttons">
+                            {% if not user.is_superuser %}
                             {% if user.id %}
                                 {% if not out_of_stock %}
                                 {% if product_in_cart %}
@@ -106,6 +108,8 @@
                                     </form>
                                 {% endif %}
                             {% endif %}
+                            {% endif %}
+
                         </div>
                         
                            
