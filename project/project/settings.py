@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-d&v_uvk*k65x6x2dsem(theg#z^c4azo#c^9=t4q&0#ye5qxbu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['54.236.201.225','0.0.0.0','fruitkha.shop','www.fruitkha.shop']
 
 
 # Application definition
@@ -144,20 +144,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'home.CustomUser'
 
 
-from decouple import config # type: ignore
-from decouple import Config, Csv # type: ignore
-
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-env_path = os.path.join(BASE_DIR, '.env')
-
-RAZOR_KEY_ID = config('RAZOR_KEY_ID')
-RAZOR_KEY_SECRET = config('RAZOR_KEY_SECRET')
-TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
-APPEND_SLASH = False
 
 
 
