@@ -1,197 +1,193 @@
 {% extends 'main_base.html' %}
-
 {% load static %}
 
-
-
-{% block content%}
-	
-
-	
-	<!-- breadcrumb-section -->
-	<div class="breadcrumb-section breadcrumb-bg">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<div class="breadcrumb-text">
-						<p>Fresh and Organic</p>
-						<h1>Shop</h1>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end breadcrumb section -->
-	<div class="product-section mt-5 mb-5">
-		<div class="container">
-			<!-- Search Bar and Product Heading -->
-			<div class="sticky-header mt-100 mb-100">
-				<div class="container">
-					
-					<div class="search-bar">
-						<form method="get" action="{% url 'home' %}" class="form-inline justify-content-center">
-							<input type="text" class="form-control mr-2" name="search_name" placeholder="Search by name" value="{{ request.GET.search_name }}">
-							<button type="submit" class="btn btn-primary">Search</button>
-						</form>
-					</div>
-				</div>
-			</div>
-	<!-- products -->
-	{% comment %} <div class="product-section mt-150 mb-150">
-		<div class="container">
-
-			<div class="row">
-                <div class="col-md-12">
-                    <div class="product-filters">
-                        <ul>
-                            <li class="active" data-filter="*">All</li>
-                            <li data-filter=".strawberry">Strawberry</li>
-                            <li data-filter=".berry">Berry</li>
-                            <li data-filter=".lemon">Lemon</li>
-                        </ul>
-                    </div>
+{% block content %}
+<!-- Breadcrumb Section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p>Fresh and Organic</p>
+                    <h1>Shop</h1>
                 </div>
-            </div> {% endcomment %}
+            </div>
+        </div>
+    </div>
+</div>
 
-			<div class="row">
-				<!-- Sidebar for Filtering Options -->
-				<div class="col-lg-3" id="filter-sidebar">
-					<div class="sidebar">
-						<form id="filter-form" method="GET">
-							<!-- Filter by Category -->
-							<div class="filter-category mb-4">
-								<h5>Filter by Category</h5>
-								<select class="form-control" name="filter_category">
-									<option value="">All Categories</option>
-									{% for category in categories %}
-										<option value="{{ category.name }}" {% if request.GET.filter_category == category.name %}selected{% endif %}>{{ category.name }}</option>
-									{% endfor %}
-								</select>
-							</div>
-	
-							<!-- Filter by Price Range -->
-							<div class="filter-price mb-4">
-								<h5>Filter by Price Range</h5>
-								<div class="form-row">
-									<div class="col">
-										<input type="number" class="form-control" name="min_price" placeholder="Min price" value="{{ request.GET.min_price }}">
-									</div>
-									<div class="col">
-										<input type="number" class="form-control" name="max_price" placeholder="Max price" value="{{ request.GET.max_price }}">
-									</div>
-								</div>
-							</div>
-	
-							<!-- Sort by Price -->
-							<div class="sort-price mb-4">
-								<h5>Sort by Price</h5>
-								<select class="form-control" name="sort_price">
-									<option value="">Sort by price</option>
-									<option value="lowest_to_highest" {% if request.GET.sort_price == 'lowest_to_highest' %}selected{% endif %}>Lowest to Highest</option>
-									<option value="highest_to_lowest" {% if request.GET.sort_price == 'highest_to_lowest' %}selected{% endif %}>Highest to Lowest</option>
-								</select>
-							</div>
-	
-							<!-- Apply filters button -->
-							<div class="apply-filters">
-								<button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
-							</div>
-						</form>
-					</div>
-				</div>
-				<!-- End Sidebar -->
-	
-				<!-- Product Listings -->
-				<div class="col-lg-9" id="product-listings">
-					<div class="row">
-						{% for product in products %}
-							<div class="col-lg-4 col-md-6 mb-4">
-								<div class="single-product-item text-center">
-									<div class="product-image">
-										<a href="{% url 'single_product' product.id %}">
-											<img src="{{ product.image1.url }}" alt="{{ product.name }}" width="200" height="200">
-										</a>
-									</div>
-									<h3>{{ product.name }}</h3>
-									<p class="product-price"><span>Per Kg</span>
-										{% if product.offer %}
-											<del>₹{{ product.original_price }}</del>
-											₹{{ product.price }}
-										{% else %}
-											₹{{ product.price }}
-										{% endif %}
-									</p>
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
-				<!-- End Product Listings -->
-			</div>
-		</div>
-	</div>
-	<!-- end product section -->
+<!-- Product Section -->
+<div class="product-section mt-5 mb-5">
+    <div class="container">
+        <!-- Search Bar and Product Heading -->
+        <div class="sticky-header mt-100 mb-100">
+            <div class="container">
+                <div class="search-bar">
+					<form method="get" action="{% url 'shop' %}" class="form-inline justify-content-center">
+                        <input type="text" class="form-control form-control-lg mr-2" name="search_name" placeholder="Search by product name" value="{{ request.GET.search_name }}" style="width: 80%;">
+                        <button type="submit" class="btn btn-primary btn-lg">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-	<style>
-		{% comment %} .sticky-header {
-			position: -webkit-sticky;
-			position: sticky;
-			top: 0;
-			z-index: 1000;
-			background: white;
-			padding: 10px 0;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		} {% endcomment %}
-		
-		#filter-sidebar {
-			position: -webkit-sticky;
-			position: sticky;
-			top: 120px; /* Adjust based on the height of the sticky header */
-			height: calc(100vh - 120px); /* Adjust based on the height of the sticky header */
-			overflow-y: auto;
-			padding-right: 15px;
-		}
-		
-		#product-listings {
-			padding-top: 20px;
-		}
-		
-		.single-product-item {
-			margin-bottom: 20px;
-		}
-		
-	</style>
-	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			const filterSidebar = document.getElementById("filter-sidebar");
-			const productListings = document.getElementById("product-listings");
-		
-			function adjustLayout() {
-				if (window.innerWidth < 992) {
-					filterSidebar.style.position = "relative";
-					filterSidebar.style.height = "auto";
-					productListings.style.marginTop = "20px";
-				} else {
-					filterSidebar.style.position = "sticky";
-					filterSidebar.style.top = "120px"; /* Adjust based on the height of the sticky header */
-					filterSidebar.style.height = "calc(100vh - 120px)"; /* Adjust based on the height of the sticky header */
-					productListings.style.marginTop = "0";
-				}
-			}
-		
-			window.addEventListener("resize", adjustLayout);
-			adjustLayout(); // Initial call on page load
-		});
-		
-	</script>
-	
-	
-		<script>
-			// JavaScript to update form action URL with current query parameters
-			document.addEventListener('DOMContentLoaded', function() {
-				var form = document.getElementById('filter-form');
-				var currentUrl = window.location.href;
-				form.action = currentUrl;
-			});
-		</script>
-{%endblock%}	
+        <div class="row">
+            <!-- Sidebar for Filtering Options -->
+            <div class="col-lg-3" id="filter-sidebar">
+                <div class="sidebar">
+                    <form id="filter-form" method="GET">
+                        <!-- Filter by Category -->
+                        <div class="filter-category mb-4">
+                            <h5>Filter by Category</h5>
+                            <select class="form-control" name="filter_category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.name }}" {% if request.GET.filter_category == category.name %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Filter by Price Range -->
+                        <div class="filter-price mb-4">
+                            <h5>Filter by Price Range</h5>
+                            <div class="form-row">
+                                <div class="col">
+                                    <input type="number" class="form-control" name="min_price" placeholder="Min price" value="{{ request.GET.min_price }}">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" name="max_price" placeholder="Max price" value="{{ request.GET.max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort by Price -->
+                        <div class="sort-price mb-4">
+                            <h5>Sort by Price</h5>
+                            <select class="form-control" name="sort_price">
+                                <option value="">Sort by price</option>
+                                <option value="lowest_to_highest" {% if request.GET.sort_price == 'lowest_to_highest' %}selected{% endif %}>Lowest to Highest</option>
+                                <option value="highest_to_lowest" {% if request.GET.sort_price == 'highest_to_lowest' %}selected{% endif %}>Highest to Lowest</option>
+                            </select>
+                        </div>
+
+                        <!-- Apply filters button -->
+                        <div class="apply-filters">
+                            <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- End Sidebar -->
+
+            <!-- Product Listings -->
+            <div class="col-lg-9" id="product-listings">
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="single-product-item text-center">
+                            <div class="product-image">
+                                <a href="{% url 'single_product' product.id %}">
+                                    <img src="{{ product.image1.url }}" alt="{{ product.name }}" width="200" height="200">
+                                </a>
+                            </div>
+                            <h3>{{ product.name }}</h3>
+                            <p class="product-price"><span>Per Kg</span>
+                                {% if product.offer %}
+                                <del>₹{{ product.original_price }}</del>
+                                ₹{{ product.price }}
+                                {% else %}
+                                ₹{{ product.price }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- End Product Listings -->
+        </div>
+    </div>
+</div>
+<!-- End Product Section -->
+
+<style>
+    #filter-sidebar {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 120px;
+        height: calc(100vh - 120px);
+        overflow-y: auto;
+        padding-right: 15px;
+    }
+
+    #product-listings {
+        padding-top: 20px;
+    }
+
+    .single-product-item {
+        margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 991.98px) {
+        #filter-sidebar {
+            position: relative;
+            height: auto;
+            overflow-y: visible;
+            padding-right: 0;
+            margin-bottom: 110px; /* Add space below sidebar on smaller screens */
+        }
+        
+        #product-listings {
+            margin-top: 20px;
+        }
+    }
+
+    /* Adjustments for search bar */
+    .search-bar {
+        text-align: center; /* Center align the form elements */
+    }
+
+    .form-control-lg {
+        width: 70%; /* Adjust width of the search input */
+        max-width: 400px; /* Set maximum width */
+        font-size: 1.2rem; /* Increase font size */
+    }
+
+    .btn-lg {
+        font-size: 1.2rem; /* Increase font size of the button */
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterSidebar = document.getElementById("filter-sidebar");
+        const productListings = document.getElementById("product-listings");
+
+        function adjustLayout() {
+            if (window.innerWidth < 992) {
+                filterSidebar.style.position = "relative";
+                filterSidebar.style.height = "auto";
+                filterSidebar.style.overflowY = "visible";
+                productListings.style.marginTop = "20px";
+            } else {
+                filterSidebar.style.position = "sticky";
+                filterSidebar.style.top = "120px";
+                filterSidebar.style.height = "calc(100vh - 120px)";
+                filterSidebar.style.overflowY = "auto";
+                productListings.style.marginTop = "0";
+            }
+        }
+
+        window.addEventListener("resize", adjustLayout);
+        adjustLayout();
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('filter-form');
+        var currentUrl = window.location.href;
+        form.action = currentUrl;
+    });
+</script>
+
+{% endblock %}
