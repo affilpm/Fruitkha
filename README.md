@@ -17,6 +17,7 @@ This project involves the development of a e-commerce platform using the Python 
  - Payment Functionality:Integrate secure payment gateways to facilitate online transactions.
 
  - Invoice Printing: Generate and print invoices for orders.
+ - etc.
 
 
 
@@ -33,3 +34,6 @@ This project involves the development of a e-commerce platform using the Python 
  - Coupon Management: Create, edit, and delete discount coupons.
 
  - Product Offers: Set up special offers and discounts on specific products.
+ - etc.
+
+
