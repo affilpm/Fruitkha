@@ -67,8 +67,11 @@ import time
 #################not superuser###########################################################################################################################
 def is_not_superuser(user):
     return not user.is_superuser
-#############home  ####################################home ############################home############################3  
 
+
+
+
+#############home  ####################################home ############################home############################3  
 
 @never_cache
 def home(request):
@@ -88,6 +91,8 @@ def home(request):
 
 
 
+
+######shop######shop######shop######shop######shop######shop######shop######shop######shop
 
 @never_cache
 def shop(request):
@@ -116,19 +121,30 @@ def shop(request):
     return render(request, 'shop.html', {'products': products, 'categories': categories})
 
 
- 
+
+
+
+######################about######################about######################about######################about#####
  
 @never_cache
 def about(request):
     return render(request, 'about.html')
+   
+   
+   
+   
+   
+####################customer_service####################customer_service####################customer_service#######
     
-    
-
+@never_cache
 def customer_service(request):
     return render(request, 'contact.html')
 
-#########address#############################address###########################address########################################################
 
+
+
+
+#########address#############################address###########################address########################################################
 
 
 @user_passes_test(is_not_superuser, login_url='user_login')

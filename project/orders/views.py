@@ -5,7 +5,6 @@ from django.http import JsonResponse
 from cart.models import Cart
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
 from django.contrib import messages
 from .models import Order, OrderItem, Coupon, Wallet, CancellationRequest, Razorpay_Order, Order_Address, Transaction
 from home.models import Address, Product
@@ -20,7 +19,6 @@ from django.apps import apps
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.http import JsonResponse
 import requests
 from django.conf import settings
 import razorpay # type: ignore
@@ -30,7 +28,8 @@ def is_not_superuser(user):
     return not user.is_superuser
 
 
-#########################################
+############orders#############################
+
 
 
 def orders(request):
@@ -59,6 +58,8 @@ def order_detail(request, order_id):
 
 
 
+#############generate_invoice#####################
+
 
 @user_passes_test(is_not_superuser, login_url='user_login')
 @never_cache
@@ -76,6 +77,7 @@ def generate_invoice(request, order_id):
 
 
 
+############### request_item_cancellation###################
 
 
 
@@ -104,6 +106,7 @@ def request_item_cancellation(request, item_id):
 
 
 
+#########retry_razorpay#########################
 
 
 @user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
@@ -134,10 +137,9 @@ def retry_razorpay(request):
   
   
   
+  
 
-#####################################
-
-
+###########remove_coupon##########################
 
 
 
@@ -151,7 +153,7 @@ def remove_coupon(request):
 
 
 
-
+##############apply_coupon####################
 
 
 
@@ -172,7 +174,7 @@ def apply_coupon(request):
     return redirect('checkout')
 
 
-
+##############add_address_checkout#######################
 
 @never_cache
 @user_passes_test(is_not_superuser, login_url='user_login')
@@ -192,6 +194,7 @@ def add_address_checkout(request):
 
 
 
+###########checkout#######################
 
 
 
@@ -257,6 +260,7 @@ def checkout(request):
 
 
 
+#########place_order##############################
 
 
 
@@ -274,6 +278,7 @@ def place_order(request):
 
 
 
+########razorpay_view##############################
 
 
 @user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
@@ -321,23 +326,9 @@ def razorpay_view(request):
 
 
 
-@never_cache
-def success(request):
-    if request.method == "POST":
-        razorpay_order_id = request.POST.get("razorpay_order_id")
+##########success######################
 
-        razorpay_order = Razorpay_Order.objects.filter(payment_id=razorpay_order_id).first()
-     
-        if razorpay_order:
-            razorpay_order.paid = True
-            razorpay_order.save()
-
-            
-    return render(request, 'order_success.html')
-
-
-
-
+@user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
 @never_cache
 @csrf_exempt
 def success(request):
@@ -360,8 +351,9 @@ def success(request):
 
 
 
+#########save_order############################
 
-
+@user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
 def save_order(request):
     if request.method == 'POST':
         cart_items = Cart.objects.filter(user=request.user)
@@ -454,7 +446,7 @@ def save_order(request):
     return redirect('order_success')
 
 
-
+##########order_success########################
 
 @user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
 @never_cache
@@ -463,6 +455,7 @@ def order_success(request):
 
 
 
+#########wallet###########################
 
 @user_passes_test(lambda u: not u.is_superuser, login_url='user_login')
 @never_cache
