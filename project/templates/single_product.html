@@ -68,6 +68,9 @@
                     <p class="product-description">{{ product.description }}</p>
                     <div class="single-product-form">
                         <p><strong>Availability:</strong> {% if product.stock != 0 %}Available{% else %}Out of stock{% endif %}</p>
+                        {% if not user.id %}
+                        <p>Login to purchase</p>
+                        {%endif%}
                         <p><strong>Category:</strong> {{ product.category }}</p>
                         <div class="action-buttons">
                             {% if not user.is_superuser %}
