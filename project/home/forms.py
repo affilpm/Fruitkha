@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser  # Assuming CustomUser is your custom user model
+from .models import CustomUser  
 import re
 from .models import Category, Product, Offer
 from django.utils.translation import gettext_lazy as _

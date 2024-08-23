@@ -1,9 +1,8 @@
 from django.contrib import admin
 from .models import Category, Product, CustomUser, Address, Offer
-
-
-# Register your models here.
 from .forms import ProductForm
+
+
 admin.site.register(CustomUser)
 admin.site.register(Category)
 admin.site.register(Address)
