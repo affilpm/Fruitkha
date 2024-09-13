@@ -16,3 +16,4 @@ class ProductAdmin(admin.ModelAdmin):
     filter_horizontal = ('related_products',) 
 
 admin.site.register(Product, ProductAdmin)
+# l
