@@ -90,14 +90,12 @@ class Product(models.Model):
 
         super(Product, self).save(*args, **kwargs)
 
-        # Resize and save the first image
         if self.image1:
             img = Image.open(self.image1.path)
             fixed_size = (300, 300)
             img.thumbnail(fixed_size)
             img.save(self.image1.path)
 
-        # Resize and save the second image
         if self.image2:
             img = Image.open(self.image2.path)
             fixed_size = (300, 300)

@@ -62,8 +62,8 @@ def cart(request):
             item.subtotal = product.price * item.quantity
             total_cost += item.subtotal  
             
-            original_price = product.original_price or product.price  # Use original price if available, otherwise use current price
-            item.original_price_total = original_price * item.quantity  # Store the original price total for the item
+            original_price = product.original_price or product.price  
+            item.original_price_total = original_price * item.quantity  
             total_original_cost += item.original_price_total
     
     return render(request, 'cart.html', {'cart_items': cart_items, 'form': form, 'total_cost': total_cost})

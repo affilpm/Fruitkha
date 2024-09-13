@@ -228,7 +228,7 @@ def checkout(request):
                     coupon = None  
             else:
                 error_message = "This coupon is no longer valid."
-                coupon = None  # Coupon is not valid anymore
+                coupon = None  
         except CouponModel.DoesNotExist:
             if 'error_message' not in locals():
                 error_message = "Invalid coupon code or the coupon is inactive."
@@ -345,7 +345,6 @@ def success(request):
         else:
             return redirect(reverse('home'))
 
-    # If request method is not POST, render the success template with GET
     return render(request, 'order_success.html')
 
 
@@ -406,7 +405,6 @@ def save_order(request):
                 razorpay_order_id = request.session.get('razorpay_order_id')
                 if razorpay_order_id:
                     razorpay_order = Razorpay_Order.objects.filter(payment_id=razorpay_order_id).first()
-                    # Ensure the razorpay_order is not already associated with another order
                     if Order.objects.filter(razorpay_order=razorpay_order).exists():
                         razorpay_order = None
 

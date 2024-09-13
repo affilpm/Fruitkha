@@ -644,10 +644,8 @@ def report(request):
     coupons_used_count = orders.exclude(coupon__isnull=True).count()
 
     if download:
-        # Create Excel data
         excel_data = generate_excel_data(orders, total_sales, products_sold_count, coupons_used_count)
 
-        # Create the response
         response = HttpResponse(excel_data, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=sales_report.xlsx'
         return response
@@ -665,28 +663,23 @@ def report(request):
     return render(request, 'sales_report.html', context)
 
 def generate_excel_data(orders, total_sales, products_sold_count, coupons_used_count):
-    # Create an Excel workbook and worksheet
     wb = Workbook()
     ws = wb.active
     ws.title = "Sales Report"
 
-    # Write the headers
     ws.append(["Order ID", "Products Ordered", "Subtotal", "Coupon Discount", "Offer Applied", "Total Cost"])
 
-    # Write data
     for order in orders:
         products_ordered = ", ".join([item.product.name for item in order.order_items])
         coupon_discount = order.coupon.discount_amount if order.coupon else "None"
         offer_applied = order.order_items.first().offer.description if order.order_items.first().offer else "None"
         ws.append([order.id, products_ordered, order.subtotal, coupon_discount, offer_applied, order.total_cost])
 
-    # Write summary data
     ws.append([])
     ws.append(["Total Sales", total_sales])
     ws.append(["Products Sold Count", products_sold_count])
     ws.append(["Coupons Used Count", coupons_used_count])
 
-    # Save the workbook to a BytesIO stream
     from io import BytesIO
     output = BytesIO()
     wb.save(output)
