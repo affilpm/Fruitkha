@@ -62,6 +62,8 @@ from django.template.loader import render_to_string
 import io
 from django.utils import timezone
 import time
+from openpyxl import Workbook
+
 
 
 #################not superuser###########################################################################################################################
@@ -611,7 +613,6 @@ def admin_dashboard(request):
 
 
 
-from openpyxl import Workbook
 
 
 @staff_member_required(login_url='admin_login')
