@@ -149,8 +149,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'home.CustomUser'
 
 
-from decouple import config # type: ignore
-from decouple import Config, Csv # type: ignore
 
 
 
